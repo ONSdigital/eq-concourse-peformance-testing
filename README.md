@@ -17,6 +17,7 @@ This will configure the target `census-eq` to point to the eq team on Concourse.
 #### Prerequisites
 You must have a project with a *Google Container Registry (GCR)* already set up to be able to push built images.
 Set your registry in *variables.yaml* to `eu.gcr.io/<gcp_project_id>`. The `gcp_project_id` should be the ID of the GCP project under which the container registry is hosted.
+Ensure in the GCR settings, the visibility is set to Public.
 
 #### Scheduled pipeline triggers
 The first time you create a pipeline that depend on a time resource, you *will not* be able to trigger tasks that depend on these time resources because there will be no available versions of time resource. In our case, a version of this resource is only created at the time specified by the pipeline, for example, the benchmark-timed-schedule pipeline is initiated at 3 AM.

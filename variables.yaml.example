@@ -1,5 +1,5 @@
-# Currently the docker registry can only be a GCR registry
-# which is accessible using the concourse service account.
+# Currently the docker registry can only be a GCR registry.
+# Ensure in the GCR settings, the visibility is set to Public.
 # The gcp_project_id should be the project id where the container registry is hosted.
 docker_registry: eu.gcr.io/<gcp_project_id}>
 

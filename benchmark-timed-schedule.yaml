@@ -56,7 +56,7 @@ jobs:
 # eQ Survey Benchmark
 ##############################################################################
 
-  - name: build-eq-survey-runner-benchmark
+  - name: build-survey-runner-benchmark
     plan:
     - get: eq-survey-runner-benchmark
     - get: scheduled-benchmark-trigger
@@ -82,7 +82,7 @@ jobs:
 # Deploy Cluster
 ##############################################################################
 
-  - name: deploy-load-generator
+  - name: deploy-infrastructure
     serial_groups: [deploy-survey-runner-benchmark]
     plan:
     - get: eq-terraform-load-generator
@@ -99,6 +99,7 @@ jobs:
           TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
           TF_VAR_gcp_folder_id: ((gcp_folder_id))
           TF_VAR_gcp_billing_account: ((gcp_billing_account))
+          PROJECT_NAME: ((project_name))
           IMPORT_EXISTING_PROJECT: ((import_existing_project))
           SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
           GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
@@ -124,7 +125,7 @@ jobs:
 
               tfenv install
 
-              ./scripts/deploy_infrastructure.sh ((project_name))
+              ./scripts/deploy_infrastructure.sh
     on_failure:
       put: slack-alert
       params:
@@ -153,7 +154,7 @@ jobs:
     plan:
     - get: eq-survey-runner-benchmark
     - get: scheduled-benchmark-trigger
-      passed: [build-eq-survey-runner-benchmark, deploy-load-generator]
+      passed: [build-survey-runner-benchmark, deploy-infrastructure]
       trigger: true
     - task: Deploy Survey Benchmark
       config:
@@ -201,8 +202,8 @@ jobs:
                 --set locustOptions="((locust_options))" \
                 --set host=https://((runner_fully_qualified_domain_name)) \
                 --set container.image=((docker_registry))/eq-survey-runner-benchmark:${COMMIT_HASH} \
-                --set gcsOutputBucket=${GCS_OUTPUT_BUCKET} \
-                --set outputDirectory="timed-schedule"
+                --set output.bucket=${GCS_OUTPUT_BUCKET} \
+                --set output.directory="timed-schedule"
 
               JOB_NAME=$(kubectl get jobs '--output=jsonpath={.items[*].metadata.name}')
 
@@ -231,14 +232,14 @@ jobs:
 # Destroy Cluster
 ##############################################################################
 
-  - name: destroy-load-generator
+  - name: destroy-infrastructure
     serial_groups: [deploy-survey-runner-benchmark]
     plan:
     - get: eq-terraform-load-generator
     - get: eq-survey-runner-benchmark
-      passed: [build-eq-survey-runner-benchmark, deploy-survey-runner-benchmark]
+      passed: [build-survey-runner-benchmark, deploy-survey-runner-benchmark]
     - get: scheduled-benchmark-trigger
-      passed: [build-eq-survey-runner-benchmark, deploy-survey-runner-benchmark]
+      passed: [build-survey-runner-benchmark, deploy-survey-runner-benchmark]
       trigger: true
     - task: Destroy Load Generator
       config:
@@ -251,6 +252,7 @@ jobs:
           TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
           TF_VAR_gcp_folder_id: ((gcp_folder_id))
           TF_VAR_gcp_billing_account: ((gcp_billing_account))
+          PROJECT_NAME: ((project_name))
           SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
           GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
         inputs:
