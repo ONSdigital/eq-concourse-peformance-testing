@@ -192,9 +192,9 @@ jobs:
 
               GCS_OUTPUT_BUCKET=${PROJECT_ID}-benchmark-outputs
               COMMIT_HASH=$(cat .git/HEAD | xargs echo -n)
+              RUNTIME_DATE_STRING="$(date +'%Y-%m-%dT%H:%M:%S')"
 
               gcloud container clusters get-credentials runner-benchmark --region ((region)) --project ${PROJECT_ID}
-              runtime_date_string="$(date +'%Y-%m-%dT%H:%M:%S')"
 
               helm tiller run \
                 helm upgrade --install \
@@ -210,7 +210,7 @@ jobs:
                 --set memory=((requested_memory_per_pod)) \
                 --set parallelism=((parallelism)) \
                 --set output.bucket=${GCS_OUTPUT_BUCKET} \
-                --set output.directory="timed-schedule/${runtime_date_string}"
+                --set output.directory="timed-schedule/${RUNTIME_DATE_STRING}"
 
               JOB_NAME=$(kubectl get jobs '--output=jsonpath={.items[*].metadata.name}')
 
