@@ -1,3 +1,19 @@
+##############################################################################
+# YAML Anchors
+##############################################################################
+common_infrastructure_params: &common_infrastructure_params
+  TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
+  TF_VAR_gcp_folder_id: ((gcp_folder_id))
+  TF_VAR_gcp_billing_account: ((gcp_billing_account))
+  TF_VAR_project_env: ((gcp_project_label))
+  PROJECT_NAME: ((project_name))
+  SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
+  GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
+
+##############################################################################
+# Resources
+##############################################################################
+
 resource_types:
   - name: slack-notification
     type: docker-image
@@ -96,14 +112,8 @@ jobs:
           source:
             repository: google/cloud-sdk
         params:
-          TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
-          TF_VAR_gcp_folder_id: ((gcp_folder_id))
-          TF_VAR_gcp_billing_account: ((gcp_billing_account))
-          TF_VAR_project_env: ((gcp_project_label))
-          PROJECT_NAME: ((project_name))
+          <<: *common_infrastructure_params
           IMPORT_EXISTING_PROJECT: ((import_existing_project))
-          SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
-          GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
         inputs:
           - name: eq-terraform-load-generator
         run:
@@ -256,13 +266,7 @@ jobs:
           source:
             repository: google/cloud-sdk
         params:
-          TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
-          TF_VAR_gcp_folder_id: ((gcp_folder_id))
-          TF_VAR_gcp_billing_account: ((gcp_billing_account))
-          TF_VAR_project_env: ((gcp_project_label))
-          PROJECT_NAME: ((project_name))
-          SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
-          GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
+          <<: *common_infrastructure_params
         inputs:
           - name: eq-terraform-load-generator
         run:
