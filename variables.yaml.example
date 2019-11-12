@@ -20,7 +20,7 @@ region: 'europe-west2'
 slack_channel_name: ''
 
 # The label for this project in GCP
-gcp_project_label: 'eq'
+gcp_project_label: 'sandbox-eq'
 
 # The full DNS name for runner
 # For example: myenv-runner.gcp.dev.eq.ons.digital

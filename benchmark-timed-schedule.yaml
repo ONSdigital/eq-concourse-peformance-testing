@@ -99,6 +99,7 @@ jobs:
           TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
           TF_VAR_gcp_folder_id: ((gcp_folder_id))
           TF_VAR_gcp_billing_account: ((gcp_billing_account))
+          TF_VAR_project_env: ((gcp_project_label))
           PROJECT_NAME: ((project_name))
           IMPORT_EXISTING_PROJECT: ((import_existing_project))
           SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
@@ -193,6 +194,7 @@ jobs:
               COMMIT_HASH=$(cat .git/HEAD | xargs echo -n)
 
               gcloud container clusters get-credentials runner-benchmark --region ((region)) --project ${PROJECT_ID}
+              runtime_date_string="$(date +'%Y-%m-%dT%H:%M:%S')"
 
               helm tiller run \
                 helm upgrade --install \
@@ -202,8 +204,13 @@ jobs:
                 --set locustOptions="((locust_options))" \
                 --set host=https://((runner_fully_qualified_domain_name)) \
                 --set container.image=((docker_registry))/eq-survey-runner-benchmark:${COMMIT_HASH} \
+                --set userWaitTimeMinSeconds=((user_wait_time_min_seconds)) \
+                --set userWaitTimemaxSeconds=((user_wait_time_max_seconds)) \
+                --set cpu=((requested_cpu_per_pod)) \
+                --set memory=((requested_memory_per_pod)) \
+                --set parallelism=((parallelism)) \
                 --set output.bucket=${GCS_OUTPUT_BUCKET} \
-                --set output.directory="timed-schedule"
+                --set output.directory="timed-schedule/${runtime_date_string}"
 
               JOB_NAME=$(kubectl get jobs '--output=jsonpath={.items[*].metadata.name}')
 
@@ -252,6 +259,7 @@ jobs:
           TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
           TF_VAR_gcp_folder_id: ((gcp_folder_id))
           TF_VAR_gcp_billing_account: ((gcp_billing_account))
+          TF_VAR_project_env: ((gcp_project_label))
           PROJECT_NAME: ((project_name))
           SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
           GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
