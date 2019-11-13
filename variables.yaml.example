@@ -26,10 +26,10 @@ gcp_project_label: 'sandbox-eq'
 # For example: myenv-runner.gcp.dev.eq.ons.digital
 runner_fully_qualified_domain_name: ''
 
-requested_cpu_per_pod: 0.7
+requested_cpu_per_pod: '0.7'
 requested_memory_per_pod: '2048Mi'
 parallelism: 1
-user_wait_time_min_seconds: 1
-user_wait_time_max_seconds: 2
+user_wait_time_min_seconds: 0
+user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
 locust_options: '--no-web -c 1 -r 1 -t 10m --csv=output -L WARNING'
