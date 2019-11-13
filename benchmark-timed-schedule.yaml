@@ -62,7 +62,7 @@ resources:
   - name: scheduled-benchmark-trigger
     type: time
     source:
-      start: 03:34 PM
+      start: 03:00 AM
       stop: 04:00 AM
       location: Europe/London
 
