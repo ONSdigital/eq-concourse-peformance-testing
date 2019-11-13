@@ -31,13 +31,13 @@ resources:
     type: git
     source:
       uri: https://github.com/ONSdigital/eq-survey-runner-benchmark.git
-      branch: store_results_in_storge_bucket
+      branch: master
 
   - name: eq-terraform-load-generator
     type: git
     source:
       uri: https://github.com/ONSdigital/eq-terraform-load-generator.git
-      branch: add-bucket-to-store-output
+      branch: master
 
 ##############################################################################
 # Docker Images
