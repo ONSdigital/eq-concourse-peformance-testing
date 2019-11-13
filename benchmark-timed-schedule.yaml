@@ -99,12 +99,12 @@ jobs:
 ##############################################################################
 
   - name: deploy-infrastructure
-    serial_groups: [deploy-survey-runner-benchmark]
+    serial_groups: [run-benchmark]
     plan:
     - get: eq-terraform-load-generator
     - get: scheduled-benchmark-trigger
       trigger: true
-    - task: Build & Deploy Load Generator
+    - task: Build & Deploy Infrastructure
       config:
         platform: linux
         image_resource:
@@ -142,7 +142,7 @@ jobs:
       params:
         channel: '#((slack_channel_name))'
         attachments:
-          - pretext: Load Generator Deploy Failed
+          - pretext: Load Generator Infrastructure Deploy Failed
             color: danger
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -151,23 +151,23 @@ jobs:
       params:
         channel: '#((slack_channel_name))'
         attachments:
-          - pretext: Load Generator Deploy Passed
+          - pretext: Load Generator Infrastructure Deploy Passed
             color: good
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
 
 ##############################################################################
-# Deploy Survey Runner Benchmark
+# Run Benchmark
 ##############################################################################
 
-  - name: deploy-survey-runner-benchmark
-    serial_groups: [deploy-survey-runner-benchmark]
+  - name: run-benchmark
+    serial_groups: [run-benchmark]
     plan:
     - get: eq-survey-runner-benchmark
     - get: scheduled-benchmark-trigger
       passed: [build-survey-runner-benchmark, deploy-infrastructure]
       trigger: true
-    - task: Deploy Survey Benchmark
+    - task: Run Survey Runner Benchmark
       config:
         platform: linux
         image_resource:
@@ -230,7 +230,7 @@ jobs:
         params:
           channel: '#((slack_channel_name))'
           attachments:
-            - pretext: Survey Benchmark Deploy Failed
+            - pretext: Survey Runner Benchmark Failed
               color: danger
               title: Concourse Build $BUILD_ID
               title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -239,7 +239,7 @@ jobs:
         params:
           channel: '#((slack_channel_name))'
           attachments:
-            - pretext: Survey Benchmark Deploy Passed
+            - pretext: Survey Runner Benchmark Passed
               color: good
               title: Concourse Build $BUILD_ID
               title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -250,15 +250,15 @@ jobs:
 ##############################################################################
 
   - name: destroy-infrastructure
-    serial_groups: [deploy-survey-runner-benchmark]
+    serial_groups: [run-benchmark]
     plan:
     - get: eq-terraform-load-generator
     - get: eq-survey-runner-benchmark
-      passed: [build-survey-runner-benchmark, deploy-survey-runner-benchmark]
+      passed: [build-survey-runner-benchmark, run-benchmark]
     - get: scheduled-benchmark-trigger
-      passed: [build-survey-runner-benchmark, deploy-survey-runner-benchmark]
+      passed: [build-survey-runner-benchmark, run-benchmark]
       trigger: true
-    - task: Destroy Load Generator
+    - task: Destroy Infrastructure
       config:
         platform: linux
         image_resource:
@@ -308,7 +308,7 @@ jobs:
       params:
         channel: '#((slack_channel_name))'
         attachments:
-          - pretext: Load Generator Destroy Failed
+          - pretext: Load Generator Infrastructure Deploy Failed
             color: danger
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -317,7 +317,7 @@ jobs:
       params:
         channel: '#((slack_channel_name))'
         attachments:
-          - pretext: Load Generator Destroy Passed
+          - pretext: Load Generator Infrastructure Deploy Passed
             color: good
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
