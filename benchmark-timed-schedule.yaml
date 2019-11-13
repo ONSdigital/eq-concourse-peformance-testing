@@ -62,7 +62,7 @@ resources:
   - name: scheduled-benchmark-trigger
     type: time
     source:
-      start: 03:00 AM
+      start: 03:34 PM
       stop: 04:00 AM
       location: Europe/London
 
@@ -176,6 +176,7 @@ jobs:
             repository: theorf/google-cloud-sdk-helm
         params:
           SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
+          IMPORT_EXISTING_PROJECT: ((import_existing_project))
         inputs:
           - name: eq-survey-runner-benchmark
         run:
@@ -196,7 +197,9 @@ jobs:
               helm init --client-only
               helm plugin install https://github.com/rimusz/helm-tiller
 
-              PROJECT_ID=($(gcloud projects list --filter=name="((project_name))" --format="value(PROJECT_ID)"))
+              FILTER_BY=$(if [[ "$IMPORT_EXISTING_PROJECT" = true ]]; then echo "project_id"; else echo "name"; fi)
+
+              PROJECT_ID=($(gcloud projects list --filter=${FILTER_BY}="((project_name))" --format="value(PROJECT_ID)"))
 
               [[ "${#PROJECT_ID[@]}" = 1 ]] || exit 1
 
