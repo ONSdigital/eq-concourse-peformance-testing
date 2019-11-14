@@ -1,0 +1,35 @@
+# Currently the docker registry can only be a GCR registry.
+# Ensure in the GCR settings, the visibility is set to Public.
+# The gcp_project_id should be the project id where the container registry is hosted.
+docker_registry: eu.gcr.io/<gcp_project_id}>
+
+import_existing_project: false
+# The environment you would like to provision e.g. dev
+# This should be the full project id if it is an existing project.
+project_name: ''
+
+# If a non development state bucket for the terraform backend is used, specify it here
+load_generator_tf_state_bucket: 'eq-terraform-load-generator-tfstate'
+
+# Override the default kubernetes version if necessary
+k8s_min_master_version: 1.13
+gcp_folder_id: ''
+gcp_billing_account: ''
+region: 'europe-west2'
+
+slack_channel_name: ''
+
+# The label for this project in GCP
+gcp_project_label: 'sandbox-eq'
+
+# The full DNS name for runner
+# For example: myenv-runner.gcp.dev.eq.ons.digital
+runner_fully_qualified_domain_name: ''
+
+requested_cpu_per_pod: '0.7'
+requested_memory_per_pod: '2048Mi'
+parallelism: 1
+user_wait_time_min_seconds: 0
+user_wait_time_max_seconds: 0
+requests_json: 'requests/census_individual_gb_eng.json'
+locust_options: '--no-web -c 1 -r 1 -t 10m --csv=output -L WARNING'

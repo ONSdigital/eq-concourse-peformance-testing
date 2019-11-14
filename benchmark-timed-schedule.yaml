@@ -1,0 +1,326 @@
+##############################################################################
+# YAML Anchors
+##############################################################################
+common_infrastructure_params: &common_infrastructure_params
+  TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
+  TF_VAR_gcp_folder_id: ((gcp_folder_id))
+  TF_VAR_gcp_billing_account: ((gcp_billing_account))
+  TF_VAR_project_env: ((gcp_project_label))
+  PROJECT_NAME: ((project_name))
+  SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
+  GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
+
+##############################################################################
+# Resources
+##############################################################################
+
+resource_types:
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: cfcommunity/slack-notification-resource
+      tag: latest
+
+resources:
+
+##############################################################################
+# Git Repositories
+##############################################################################
+
+  - name: eq-survey-runner-benchmark
+    type: git
+    source:
+      uri: https://github.com/ONSdigital/eq-survey-runner-benchmark.git
+      branch: master
+
+  - name: eq-terraform-load-generator
+    type: git
+    source:
+      uri: https://github.com/ONSdigital/eq-terraform-load-generator.git
+      branch: master
+
+##############################################################################
+# Docker Images
+##############################################################################
+
+  - name: eq-survey-runner-benchmark-image
+    type: docker-image
+    source:
+      repository: ((docker_registry))/eq-survey-runner-benchmark
+      username: _json_key
+      password: ((gcp.service_account_json))
+
+##############################################################################
+# Misc Resources
+##############################################################################
+
+  - name: slack-alert
+    type: slack-notification
+    source:
+      url: ((slack.webhook))
+
+  - name: scheduled-benchmark-trigger
+    type: time
+    source:
+      start: 03:00 AM
+      stop: 04:00 AM
+      location: Europe/London
+
+jobs:
+
+##############################################################################
+# Build Survey Runner Benchmark
+##############################################################################
+
+  - name: build-survey-runner-benchmark
+    plan:
+    - get: eq-survey-runner-benchmark
+    - get: scheduled-benchmark-trigger
+      trigger: true
+    - put: eq-survey-runner-benchmark-image
+      params:
+        build: eq-survey-runner-benchmark
+        tag_file: eq-survey-runner-benchmark/.git/HEAD
+        tag_as_latest: true
+      get_params:
+        skip_download: true
+    on_failure:
+      put: slack-alert
+      params:
+        channel: '#((slack_channel_name))'
+        attachments:
+          - pretext: Benchmark Image Build Failed
+            color: danger
+            title: Concourse Build $BUILD_ID
+            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+
+##############################################################################
+# Deploy Infrastructure
+##############################################################################
+
+  - name: deploy-infrastructure
+    serial_groups: [run-benchmark]
+    plan:
+    - get: eq-terraform-load-generator
+    - get: scheduled-benchmark-trigger
+      trigger: true
+    - task: Build & Deploy Infrastructure
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: google/cloud-sdk
+        params:
+          <<: *common_infrastructure_params
+          IMPORT_EXISTING_PROJECT: ((import_existing_project))
+        inputs:
+          - name: eq-terraform-load-generator
+        run:
+          path: bash
+          args:
+            - -exc
+            - |
+              apt-get install -y unzip
+
+              git clone https://github.com/kamatama41/tfenv.git ~/.tfenv && \
+              ln -s /root/.tfenv/bin/* /usr/local/bin
+
+              cat >$GOOGLE_APPLICATION_CREDENTIALS <<EOL
+              $SERVICE_ACCOUNT_JSON
+              EOL
+
+              gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+
+              cd eq-terraform-load-generator
+
+              tfenv install
+
+              ./scripts/deploy_infrastructure.sh
+    on_failure:
+      put: slack-alert
+      params:
+        channel: '#((slack_channel_name))'
+        attachments:
+          - pretext: Load Generator Infrastructure Deploy Failed
+            color: danger
+            title: Concourse Build $BUILD_ID
+            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+    on_success:
+      put: slack-alert
+      params:
+        channel: '#((slack_channel_name))'
+        attachments:
+          - pretext: Load Generator Infrastructure Deploy Passed
+            color: good
+            title: Concourse Build $BUILD_ID
+            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+
+##############################################################################
+# Run Benchmark
+##############################################################################
+
+  - name: run-benchmark
+    serial_groups: [run-benchmark]
+    plan:
+    - get: eq-survey-runner-benchmark
+    - get: scheduled-benchmark-trigger
+      passed: [build-survey-runner-benchmark, deploy-infrastructure]
+      trigger: true
+    - task: Run Survey Runner Benchmark
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: theorf/google-cloud-sdk-helm
+        params:
+          SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
+          IMPORT_EXISTING_PROJECT: ((import_existing_project))
+        inputs:
+          - name: eq-survey-runner-benchmark
+        run:
+          path: bash
+          args:
+            - -exc
+            - |
+              apt-get install -y procps
+
+              cat >~/gcloud-service-key.json <<EOL
+              $SERVICE_ACCOUNT_JSON
+              EOL
+
+              gcloud auth activate-service-account --key-file ~/gcloud-service-key.json
+
+              cd eq-survey-runner-benchmark
+
+              helm init --client-only
+              helm plugin install https://github.com/rimusz/helm-tiller
+
+              FILTER_BY=$(if [[ "$IMPORT_EXISTING_PROJECT" = true ]]; then echo "project_id"; else echo "name"; fi)
+
+              PROJECT_ID=($(gcloud projects list --filter=${FILTER_BY}="((project_name))" --format="value(PROJECT_ID)"))
+
+              [[ "${#PROJECT_ID[@]}" = 1 ]] || exit 1
+
+              GCS_OUTPUT_BUCKET=${PROJECT_ID}-benchmark-outputs
+              COMMIT_HASH=$(cat .git/HEAD | xargs echo -n)
+              RUNTIME_DATE_STRING="$(date +'%Y-%m-%dT%H:%M:%S')"
+
+              gcloud container clusters get-credentials runner-benchmark --region ((region)) --project ${PROJECT_ID}
+
+              helm tiller run \
+                helm upgrade --install \
+                runner-benchmark \
+                k8s/helm \
+                --set requestsJson="((requests_json))" \
+                --set locustOptions="((locust_options))" \
+                --set host=https://((runner_fully_qualified_domain_name)) \
+                --set container.image=((docker_registry))/eq-survey-runner-benchmark:${COMMIT_HASH} \
+                --set userWaitTimeMinSeconds=((user_wait_time_min_seconds)) \
+                --set userWaitTimemaxSeconds=((user_wait_time_max_seconds)) \
+                --set cpu=((requested_cpu_per_pod)) \
+                --set memory=((requested_memory_per_pod)) \
+                --set parallelism=((parallelism)) \
+                --set output.bucket=${GCS_OUTPUT_BUCKET} \
+                --set output.directory="timed-schedule/${RUNTIME_DATE_STRING}"
+
+              JOB_NAME=$(kubectl get jobs '--output=jsonpath={.items[*].metadata.name}')
+
+              kubectl wait --for=condition=complete --timeout=60m job/${JOB_NAME}
+      on_failure:
+        put: slack-alert
+        params:
+          channel: '#((slack_channel_name))'
+          attachments:
+            - pretext: Survey Runner Benchmark Failed
+              color: danger
+              title: Concourse Build $BUILD_ID
+              title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+      on_success:
+        put: slack-alert
+        params:
+          channel: '#((slack_channel_name))'
+          attachments:
+            - pretext: Survey Runner Benchmark Passed
+              color: good
+              title: Concourse Build $BUILD_ID
+              title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+
+
+##############################################################################
+# Destroy Infrastructure
+##############################################################################
+
+  - name: destroy-infrastructure
+    serial_groups: [run-benchmark]
+    plan:
+    - get: eq-terraform-load-generator
+    - get: eq-survey-runner-benchmark
+      passed: [build-survey-runner-benchmark, run-benchmark]
+    - get: scheduled-benchmark-trigger
+      passed: [build-survey-runner-benchmark, run-benchmark]
+      trigger: true
+    - task: Destroy Infrastructure
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: google/cloud-sdk
+        params:
+          <<: *common_infrastructure_params
+        inputs:
+          - name: eq-terraform-load-generator
+        run:
+          path: bash
+          args:
+            - -exc
+            - |
+              apt-get install -y unzip
+
+              git clone https://github.com/kamatama41/tfenv.git ~/.tfenv && \
+              ln -s /root/.tfenv/bin/* /usr/local/bin
+
+              cat >$GOOGLE_APPLICATION_CREDENTIALS <<EOL
+              $SERVICE_ACCOUNT_JSON
+              EOL
+
+              gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+
+              cd eq-terraform-load-generator
+
+              tfenv install
+
+              terraform init --upgrade --backend-config prefix=((project_name)) -var "project_name=((project_name))" --backend-config bucket=((load_generator_tf_state_bucket))
+
+              # Do not delete the project or bucket.
+              terraform state rm google_project.project
+              terraform state rm google_storage_bucket.benchmark-output-storage
+
+              # Destroy infrastructure
+              terraform destroy --auto-approve -var "project_name=((project_name))"
+
+              PROJECT_ID=($(gcloud projects list --filter=name="((project_name))" --format="value(PROJECT_ID)"))
+
+              # Import project and bucket resouce back into the state
+              terraform import google_project.project "$PROJECT_ID"
+              terraform import google_storage_bucket.benchmark-output-storage ${PROJECT_ID}-benchmark-outputs
+    on_failure:
+      put: slack-alert
+      params:
+        channel: '#((slack_channel_name))'
+        attachments:
+          - pretext: Load Generator Infrastructure Deploy Failed
+            color: danger
+            title: Concourse Build $BUILD_ID
+            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+    on_success:
+      put: slack-alert
+      params:
+        channel: '#((slack_channel_name))'
+        attachments:
+          - pretext: Load Generator Infrastructure Deploy Passed
+            color: good
+            title: Concourse Build $BUILD_ID
+            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
