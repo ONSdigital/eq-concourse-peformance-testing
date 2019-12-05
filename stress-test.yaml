@@ -86,13 +86,6 @@ resources:
     source:
       url: ((slack.webhook))
 
-  - name: scheduled-benchmark-trigger
-    type: time
-    source:
-      start: 03:00 AM
-      stop: 04:00 AM
-      location: Europe/London
-
 jobs:
 
 ##############################################################################
@@ -102,8 +95,6 @@ jobs:
   - name: build-survey-runner-benchmark
     plan:
     - get: eq-survey-runner-benchmark
-    - get: scheduled-benchmark-trigger
-      trigger: true
     - put: eq-survey-runner-benchmark-image
       params:
         build: eq-survey-runner-benchmark
@@ -126,12 +117,10 @@ jobs:
 ##############################################################################
 
   - name: deploy-infrastructure
-    serial_groups: [run-benchmark]
+    serial_groups: [run-stress-test]
     plan:
     - get: eq-terraform-load-generator
     - get: eq-infrastructure-build-image
-    - get: scheduled-benchmark-trigger
-      trigger: true
     - task: Build & Deploy Infrastructure
       file: 'eq-terraform-load-generator/ci/build_deploy_infrastructure.yaml'
       image: eq-infrastructure-build-image
@@ -158,17 +147,14 @@ jobs:
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
 
 ##############################################################################
-# Run Benchmark
+# Run Stress Test
 ##############################################################################
 
-  - name: run-benchmark
-    serial_groups: [run-benchmark]
+  - name: run-stress-test
+    serial_groups: [run-stress-test]
     plan:
     - get: eq-survey-runner-benchmark
-    - get: scheduled-benchmark-trigger
-      passed: [build-survey-runner-benchmark, deploy-infrastructure]
-      trigger: true
-    - task: Run Survey Runner Benchmark
+    - task: Run Survey Runner Stress Test
       file: 'eq-survey-runner-benchmark/ci/run-locust.yaml'
       params:
         <<: *run_locust_vars
@@ -177,7 +163,7 @@ jobs:
         params:
           channel: '#((slack_channel_name))'
           attachments:
-            - pretext: Survey Runner Benchmark Failed
+            - pretext: Survey Runner Stress Test Failed
               color: danger
               title: Concourse Build $BUILD_ID
               title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -186,7 +172,7 @@ jobs:
         params:
           channel: '#((slack_channel_name))'
           attachments:
-            - pretext: Survey Runner Benchmark Passed
+            - pretext: Survey Runner Stress Test Passed
               color: good
               title: Concourse Build $BUILD_ID
               title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -197,14 +183,11 @@ jobs:
 ##############################################################################
 
   - name: destroy-infrastructure
-    serial_groups: [run-benchmark]
+    serial_groups: [run-stress-test]
     plan:
     - get: eq-terraform-load-generator
     - get: eq-survey-runner-benchmark
-      passed: [build-survey-runner-benchmark, run-benchmark]
-    - get: scheduled-benchmark-trigger
-      passed: [build-survey-runner-benchmark, run-benchmark]
-      trigger: true
+      passed: [build-survey-runner-benchmark, run-stress-test]
     - task: Destroy Infrastructure
       file: 'eq-terraform-load-generator/ci/destroy_infrastructure.yaml'
       params:
@@ -228,3 +211,4 @@ jobs:
             color: good
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+

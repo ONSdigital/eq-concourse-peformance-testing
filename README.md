@@ -1,6 +1,6 @@
 # eq-concourse-peformance-testing
 
-This repo holds the pipeline to performance test eQ Survey Runner.
+This repo holds the pipelines to performance and stress test EQ Survey Runner.
 
 ## Authenticate with Concourse
 
@@ -38,6 +38,7 @@ Therefore, for development purposes, you will need to set the source start time 
 Pipeline | Schedule | Notes |
 --- | --- | --- |
 benchmark-timed-schedule.yaml | 3 AM every day | Deploys infrastructure required to carries out a performance test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket. Once complete the infrastructure is torn down ready for the next scheduled test.
+stress-test.yaml | Manually triggered | Deploys infrastructure required to carry out a stress test of eq-questionnaire-runner. The outputs are stored in a GCS bucket.
 
 #### Deployment process
 

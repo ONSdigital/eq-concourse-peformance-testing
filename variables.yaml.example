@@ -1,7 +1,10 @@
 # Currently the docker registry can only be a GCR registry.
 # Ensure in the GCR settings, the visibility is set to Public.
 # The gcp_project_id should be the project id where the container registry is hosted.
-docker_registry: eu.gcr.io/<gcp_project_id}>
+docker_registry: eu.gcr.io/<gcp_project_id>
+
+# The docker registry to pull the build images from.
+build_image_docker_registry: eu.gcr.io/<gcp_project_id>
 
 import_existing_project: false
 # The environment you would like to provision e.g. dev
@@ -16,6 +19,7 @@ k8s_min_master_version: 1.13
 gcp_folder_id: ''
 gcp_billing_account: ''
 region: 'europe-west2'
+machine_type: 'n1-standard-2'
 
 slack_channel_name: ''
 
@@ -28,8 +32,11 @@ runner_fully_qualified_domain_name: ''
 
 requested_cpu_per_pod: '0.7'
 requested_memory_per_pod: '2048Mi'
+
+# How many instances of locust to run
 parallelism: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
 locust_options: '--no-web -c 1 -r 1 -t 10m --csv=output -L WARNING'
+timeout: '60m'
