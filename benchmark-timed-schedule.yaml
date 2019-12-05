@@ -110,7 +110,7 @@ jobs:
         image_resource:
           type: docker-image
           source:
-            repository: google/cloud-sdk
+            repository: ((docker_registry))/eq-infrastructure-build-image
         params:
           <<: *common_infrastructure_params
           IMPORT_EXISTING_PROJECT: ((import_existing_project))
@@ -121,10 +121,6 @@ jobs:
           args:
             - -exc
             - |
-              apt-get install -y unzip
-
-              git clone https://github.com/kamatama41/tfenv.git ~/.tfenv && \
-              ln -s /root/.tfenv/bin/* /usr/local/bin
 
               cat >$GOOGLE_APPLICATION_CREDENTIALS <<EOL
               $SERVICE_ACCOUNT_JSON
@@ -134,7 +130,7 @@ jobs:
 
               cd eq-terraform-load-generator
 
-              tfenv install
+              tfenv use "$(< .terraform-version)"
 
               ./scripts/deploy_infrastructure.sh
     on_failure:
@@ -267,7 +263,7 @@ jobs:
         image_resource:
           type: docker-image
           source:
-            repository: google/cloud-sdk
+            repository: ((docker_registry))/eq-infrastructure-build-image
         params:
           <<: *common_infrastructure_params
         inputs:
@@ -277,10 +273,6 @@ jobs:
           args:
             - -exc
             - |
-              apt-get install -y unzip
-
-              git clone https://github.com/kamatama41/tfenv.git ~/.tfenv && \
-              ln -s /root/.tfenv/bin/* /usr/local/bin
 
               cat >$GOOGLE_APPLICATION_CREDENTIALS <<EOL
               $SERVICE_ACCOUNT_JSON
@@ -290,7 +282,7 @@ jobs:
 
               cd eq-terraform-load-generator
 
-              tfenv install
+              tfenv use "$(< .terraform-version)"
 
               terraform init --upgrade --backend-config prefix=((project_name)) -var "project_name=((project_name))" --backend-config bucket=((load_generator_tf_state_bucket))
 
