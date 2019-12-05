@@ -218,7 +218,7 @@ jobs:
                 --set host=https://((runner_fully_qualified_domain_name)) \
                 --set container.image=((docker_registry))/eq-survey-runner-benchmark:${COMMIT_HASH} \
                 --set userWaitTimeMinSeconds=((user_wait_time_min_seconds)) \
-                --set userWaitTimemaxSeconds=((user_wait_time_max_seconds)) \
+                --set userWaitTimeMaxSeconds=((user_wait_time_max_seconds)) \
                 --set cpu=((requested_cpu_per_pod)) \
                 --set memory=((requested_memory_per_pod)) \
                 --set parallelism=((parallelism)) \
