@@ -290,8 +290,11 @@ jobs:
               terraform state rm google_project.project
               terraform state rm google_storage_bucket.benchmark-output-storage
 
+              # Export Project Name Env Var
+              export TF_VAR_project_name=((project_name))
+
               # Destroy infrastructure
-              terraform destroy --auto-approve -var "project_name=((project_name))"
+              terraform destroy --auto-approve
 
               PROJECT_ID=($(gcloud projects list --filter=name="((project_name))" --format="value(PROJECT_ID)"))
 
