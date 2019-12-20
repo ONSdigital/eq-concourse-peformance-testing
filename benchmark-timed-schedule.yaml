@@ -46,7 +46,7 @@ resources:
   - name: eq-survey-runner-benchmark-image
     type: docker-image
     source:
-      repository: ((docker_registry))/eq-survey-runner-benchmark
+      repository: ((app_docker_registry))/eq-survey-runner-benchmark
       username: _json_key
       password: ((gcp.service_account_json))
 
@@ -110,7 +110,7 @@ jobs:
         image_resource:
           type: docker-image
           source:
-            repository: ((docker_registry))/eq-infrastructure-build-image
+            repository: ((build_image_docker_registry))/eq-infrastructure-build-image
         params:
           <<: *common_infrastructure_params
           IMPORT_EXISTING_PROJECT: ((import_existing_project))
@@ -212,7 +212,7 @@ jobs:
                 --set requestsJson="((requests_json))" \
                 --set locustOptions="((locust_options))" \
                 --set host=https://((runner_fully_qualified_domain_name)) \
-                --set container.image=((docker_registry))/eq-survey-runner-benchmark:${COMMIT_HASH} \
+                --set container.image=((app_docker_registry))/eq-survey-runner-benchmark:${COMMIT_HASH} \
                 --set userWaitTimeMinSeconds=((user_wait_time_min_seconds)) \
                 --set userWaitTimeMaxSeconds=((user_wait_time_max_seconds)) \
                 --set cpu=((requested_cpu_per_pod)) \
@@ -263,7 +263,7 @@ jobs:
         image_resource:
           type: docker-image
           source:
-            repository: ((docker_registry))/eq-infrastructure-build-image
+            repository: ((build_image_docker_registry))/eq-infrastructure-build-image
         params:
           <<: *common_infrastructure_params
         inputs:
