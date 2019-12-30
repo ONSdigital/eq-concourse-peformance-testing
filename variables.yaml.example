@@ -38,5 +38,7 @@ parallelism: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
-locust_options: '--no-web -c 1 -r 1 -t 10m --csv=output -L WARNING'
+num_clients: 10
+hatch_rate: 10
+run_time: '30m'
 timeout: '60m'
