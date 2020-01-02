@@ -124,7 +124,7 @@ jobs:
     - get: eq-terraform-load-generator
     - get: eq-infrastructure-build-image
     - task: Build & Deploy Infrastructure
-      file: 'eq-terraform-load-generator/ci/build_deploy_infrastructure.yaml'
+      file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
       image: eq-infrastructure-build-image
       params:
         <<: *deploy_infrastructure_vars
@@ -190,7 +190,7 @@ jobs:
     - get: eq-survey-runner-benchmark
       passed: [build-survey-runner-benchmark, run-stress-test]
     - task: Destroy Infrastructure
-      file: 'eq-terraform-load-generator/ci/destroy_infrastructure.yaml'
+      file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
       params:
         <<: *destroy_infrastructure_vars
     on_failure:
