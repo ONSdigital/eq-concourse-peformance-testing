@@ -17,7 +17,7 @@ deploy_infrastructure_vars: &deploy_infrastructure_vars
 destroy_infrastructure_vars: &destroy_infrastructure_vars
   LOAD_GENERATOR_TF_STATE_BUCKET: ((load_generator_tf_state_bucket))
 
-run_benchmark_vars: &run_benchmark_vars
+run_stress_test_vars: &run_stress_test_vars
   SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
   IMPORT_EXISTING_PROJECT: ((import_existing_project))
   PROJECT_NAME: ((project_name))
@@ -157,7 +157,7 @@ jobs:
     - task: Run Survey Runner Stress Test
       file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
       params:
-        <<: *run_benchmark_vars
+        <<: *run_stress_test_vars
       on_failure:
         put: slack-alert
         params:
