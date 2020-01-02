@@ -38,7 +38,7 @@ parallelism: 6
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
-num_clients: 125
+number_of_clients_per_pod: 125
 hatch_rate: 125
 run_time: '30m'
 timeout: '60m'

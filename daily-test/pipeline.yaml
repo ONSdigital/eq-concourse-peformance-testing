@@ -25,7 +25,7 @@ run_benchmark_vars: &run_benchmark_vars
   PROJECT_NAME: ((project_name))
   REGION: ((region))
   REQUESTS_JSON: ((requests_json))
-  LOCUST_OPTIONS: '--no-web --clients ((num_clients)) --hatch-rate ((hatch_rate)) --run-time ((run_time)) --csv=output -L WARNING'
+  LOCUST_OPTIONS: '--no-web --clients ((number_of_clients_per_pod)) --hatch-rate ((hatch_rate)) --run-time ((run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((runner_fully_qualified_domain_name))
   DOCKER_REGISTRY: ((docker_registry))
   USER_WAIT_TIME_MIN_SECONDS: ((user_wait_time_min_seconds))
