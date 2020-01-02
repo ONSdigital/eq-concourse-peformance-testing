@@ -169,7 +169,7 @@ jobs:
       passed: [build-survey-runner-benchmark, deploy-infrastructure]
       trigger: true
     - task: Run Survey Runner Benchmark
-      file: 'eq-survey-runner-benchmark/ci/run-locust.yaml'
+      file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
       params:
         <<: *run_locust_vars
       on_failure:

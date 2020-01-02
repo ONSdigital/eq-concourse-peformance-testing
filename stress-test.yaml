@@ -155,7 +155,7 @@ jobs:
     plan:
     - get: eq-survey-runner-benchmark
     - task: Run Survey Runner Stress Test
-      file: 'eq-survey-runner-benchmark/ci/run-locust.yaml'
+      file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
       params:
         <<: *run_locust_vars
       on_failure:
