@@ -33,7 +33,7 @@ runner_fully_qualified_domain_name: ''
 requested_cpu_per_pod: '0.7'
 requested_memory_per_pod: '2048Mi'
 
-# How many instances of locust to run
+# How many instances of the test runner to use
 parallelism: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
