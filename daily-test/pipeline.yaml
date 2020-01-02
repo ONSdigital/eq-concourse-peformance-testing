@@ -215,7 +215,7 @@ jobs:
       params:
         channel: '#((slack_channel_name))'
         attachments:
-          - pretext: Load Generator Infrastructure Deploy Failed
+          - pretext: Load Generator Infrastructure Destroy Failed
             color: danger
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
@@ -224,7 +224,7 @@ jobs:
       params:
         channel: '#((slack_channel_name))'
         attachments:
-          - pretext: Load Generator Infrastructure Deploy Passed
+          - pretext: Load Generator Infrastructure Destroy Passed
             color: good
             title: Concourse Build $BUILD_ID
             title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
