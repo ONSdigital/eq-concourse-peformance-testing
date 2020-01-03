@@ -201,15 +201,13 @@ jobs:
     serial_groups: [run-benchmark]
     plan:
     - get: eq-terraform-load-generator
-    - get: eq-infrastructure-build-image
     - get: eq-survey-runner-benchmark
       passed: [build-survey-runner-benchmark, run-benchmark]
     - get: scheduled-benchmark-trigger
       passed: [build-survey-runner-benchmark, run-benchmark]
       trigger: true
     - task: Destroy Infrastructure
-      file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
-      image: eq-infrastructure-build-image
+      file: 'eq-terraform-load-generator/ci/destroy_infrastructure.yaml'
       params:
         <<: *destroy_infrastructure_vars
     on_failure:

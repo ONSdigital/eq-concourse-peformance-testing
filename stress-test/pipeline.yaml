@@ -33,6 +33,7 @@ run_stress_test_vars: &run_stress_test_vars
   REQUESTED_CPU_PER_POD: ((requested_cpu_per_pod))
   REQUESTED_MEMORY_PER_POD: ((requested_memory_per_pod))
   PARALLELISM: ((parallelism))
+  TIMEOUT: ((timeout))
 
 ##############################################################################
 # Resources
@@ -123,6 +124,7 @@ jobs:
     plan:
     - get: eq-terraform-load-generator
     - get: eq-infrastructure-build-image
+    - get: eq-survey-runner-benchmark
     - task: Build & Deploy Infrastructure
       file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
       image: eq-infrastructure-build-image
@@ -155,6 +157,10 @@ jobs:
     serial_groups: [run-stress-test]
     plan:
     - get: eq-survey-runner-benchmark
+      passed:
+        - deploy-infrastructure
+        -  build-survey-runner-benchmark
+      trigger: true
     - task: Run Survey Runner Stress Test
       file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
       params:
@@ -186,10 +192,14 @@ jobs:
   - name: destroy-infrastructure
     serial_groups: [run-stress-test]
     plan:
-    - get: eq-terraform-load-generator
     - get: eq-infrastructure-build-image
+      passed:
+        - deploy-infrastructure
     - get: eq-survey-runner-benchmark
-      passed: [build-survey-runner-benchmark, run-stress-test]
+      passed:
+        - run-stress-test
+      trigger: true
+    - get: eq-terraform-load-generator
     - task: Destroy Infrastructure
       file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
       image: eq-infrastructure-build-image
