@@ -15,7 +15,7 @@ run_stress_test_vars: &run_stress_test_vars
   REQUESTS_JSON: ((requests_json))
   LOCUST_OPTIONS: '--no-web --clients ((number_of_clients_per_pod)) --hatch-rate ((hatch_rate)) --run-time ((run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((runner_fully_qualified_domain_name))
-  DOCKER_REGISTRY: ((docker_registry))
+  DOCKER_REGISTRY: ((app_docker_registry))
   USER_WAIT_TIME_MIN_SECONDS: ((user_wait_time_min_seconds))
   USER_WAIT_TIME_MAX_SECONDS: ((user_wait_time_max_seconds))
   REQUESTED_CPU_PER_POD: ((requested_cpu_per_pod))
@@ -59,7 +59,7 @@ resources:
   - name: eq-survey-runner-benchmark-image
     type: docker-image
     source:
-      repository: ((docker_registry))/eq-survey-runner-benchmark
+      repository: ((app_docker_registry))/eq-survey-runner-benchmark
       username: _json_key
       password: ((gcp.service_account_json))
 
