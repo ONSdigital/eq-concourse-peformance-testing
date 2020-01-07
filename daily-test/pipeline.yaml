@@ -10,8 +10,6 @@ infrastructure_vars: &infrastructure_vars
   TF_VAR_project_name: ((project_name))
 
 run_benchmark_vars: &run_benchmark_vars
-  SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
-  IMPORT_EXISTING_PROJECT: ((import_existing_project))
   PROJECT_NAME: ((project_name))
   REGION: ((region))
   REQUESTS_JSON: ((requests_json))

@@ -15,8 +15,8 @@ terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
 
 # Override the default kubernetes version if necessary
 k8s_min_master_version: 1.13
-gcp_folder_id: ''
-gcp_billing_account: ''
+gcp_folder_id: '979069919925'
+gcp_billing_account: '010C5C-D2E6F2-FA1F92'
 region: 'europe-west2'
 machine_type: 'n1-standard-2'
 
@@ -29,15 +29,15 @@ gcp_project_label: 'sandbox-eq'
 # For example: myenv-runner.gcp.dev.eq.ons.digital
 runner_fully_qualified_domain_name: 'stress-test-runner.gcp.dev.eq.ons.digital'
 
-requested_cpu_per_pod: '1'
-requested_memory_per_pod: '4048Mi'
+requested_cpu_per_pod: '0.5'
+requested_memory_per_pod: '2048Mi'
 
-# How many instances of locust to run
-parallelism: 6
+# How many instances of the test runner to run
+parallelism: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
-number_of_clients_per_pod: 125
-hatch_rate: 125
-run_time: '30m'
+number_of_clients_per_pod: '125'
+hatch_rate: '125'
+run_time: '2m'
 timeout: '60m'
