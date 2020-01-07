@@ -38,7 +38,7 @@ Therefore, for development purposes, you will need to set the source start time 
 Pipeline | Schedule | Notes |
 --- | --- | --- |
 daily-test | 3 AM every day | Deploys infrastructure required to carry out a performance test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket. Once complete the infrastructure is torn down ready for the next scheduled test.
-stress-test | Manually triggered | Deploys infrastructure required to carry out a stress test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket. Once complete the infrastructure is torn down ready for the next scheduled test.
+stress-test | Manually triggered | Deploys infrastructure required to carry out a stress test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket. Once complete the infrastructure is torn down.
 
 #### Deployment process
 

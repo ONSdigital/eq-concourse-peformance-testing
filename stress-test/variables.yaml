@@ -15,8 +15,8 @@ terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
 
 # Override the default kubernetes version if necessary
 k8s_min_master_version: 1.13
-gcp_folder_id: '979069919925'
-gcp_billing_account: '010C5C-D2E6F2-FA1F92'
+gcp_folder_id: ''
+gcp_billing_account: ''
 region: 'europe-west2'
 machine_type: 'n1-standard-2'
 
