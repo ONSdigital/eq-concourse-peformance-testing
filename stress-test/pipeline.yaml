@@ -3,19 +3,19 @@
 ##############################################################################
 infrastructure_vars: &infrastructure_vars
   TF_VAR_k8s_min_master_version: ((k8s_min_master_version))
-  TF_VAR_gcp_folder_id: ((gcp_folder_id))
-  TF_VAR_gcp_billing_account: ((gcp_billing_account))
-  TF_VAR_project_env: ((gcp_project_label))
-  TF_VAR_machine_type: ((machine_type))
-  TF_VAR_project_name: ((project_name))
+  TF_VAR_gcp_folder_id: ((google.folder_id))
+  TF_VAR_gcp_billing_account: ((google.billing_account))
+  TF_VAR_project_env: ((google.project_label))
+  TF_VAR_machine_type: ((google.machine_type))
+  TF_VAR_project_name: ((google.project_name))
 
 run_stress_test_vars: &run_stress_test_vars
-  PROJECT_NAME: ((project_name))
-  REGION: ((region))
+  PROJECT_NAME: ((google.project_name))
+  REGION: ((google.region))
   REQUESTS_JSON: ((requests_json))
   LOCUST_OPTIONS: '--no-web --clients ((number_of_clients_per_pod)) --hatch-rate ((hatch_rate)) --run-time ((run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((runner_fully_qualified_domain_name))
-  DOCKER_REGISTRY: ((app_docker_registry))
+  DOCKER_REGISTRY: ((docker.app_registry))
   USER_WAIT_TIME_MIN_SECONDS: ((user_wait_time_min_seconds))
   USER_WAIT_TIME_MAX_SECONDS: ((user_wait_time_max_seconds))
   REQUESTED_CPU_PER_POD: ((requested_cpu_per_pod))
@@ -59,14 +59,14 @@ resources:
   - name: eq-survey-runner-benchmark-image
     type: docker-image
     source:
-      repository: ((app_docker_registry))/eq-survey-runner-benchmark
+      repository: ((docker.app_registry))/eq-survey-runner-benchmark
       username: _json_key
       password: ((gcp.service_account_json))
 
   - name: eq-infrastructure-build-image
     type: docker-image
     source:
-      repository: ((build_image_docker_registry))/eq-infrastructure-build-image
+      repository: ((docker.build_image_registry))/eq-infrastructure-build-image
 
 ##############################################################################
 # Misc Resources
