@@ -7,21 +7,9 @@ infrastructure_vars: &infrastructure_vars
   TF_VAR_gcp_billing_account: ((gcp_billing_account))
   TF_VAR_project_env: ((gcp_project_label))
   TF_VAR_machine_type: ((machine_type))
-  PROJECT_NAME: ((project_name))
-  SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
-  GOOGLE_APPLICATION_CREDENTIALS: /root/gcloud-service-key.json
-
-deploy_infrastructure_vars: &deploy_infrastructure_vars
-  <<: *infrastructure_vars
-  IMPORT_EXISTING_PROJECT: ((import_existing_project))
-
-destroy_infrastructure_vars: &destroy_infrastructure_vars
-  <<: *infrastructure_vars
-  LOAD_GENERATOR_TF_STATE_BUCKET: ((load_generator_tf_state_bucket))
+  TF_VAR_project_name: ((project_name))
 
 run_stress_test_vars: &run_stress_test_vars
-  SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
-  IMPORT_EXISTING_PROJECT: ((import_existing_project))
   PROJECT_NAME: ((project_name))
   REGION: ((region))
   REQUESTS_JSON: ((requests_json))
@@ -129,7 +117,7 @@ jobs:
       file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
       image: eq-infrastructure-build-image
       params:
-        <<: *deploy_infrastructure_vars
+        <<: *infrastructure_vars
     on_failure:
       put: slack-alert
       params:
@@ -192,6 +180,7 @@ jobs:
   - name: destroy-infrastructure
     serial_groups: [run-stress-test]
     plan:
+    - get: eq-terraform-load-generator
     - get: eq-infrastructure-build-image
       passed:
         - deploy-infrastructure
@@ -199,12 +188,11 @@ jobs:
       passed:
         - run-stress-test
       trigger: true
-    - get: eq-terraform-load-generator
     - task: Destroy Infrastructure
       file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
       image: eq-infrastructure-build-image
       params:
-        <<: *destroy_infrastructure_vars
+        <<: *infrastructure_vars
     on_failure:
       put: slack-alert
       params:
