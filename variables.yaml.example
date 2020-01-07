@@ -1,31 +1,30 @@
+google:
+  # The environment you would like to provision e.g. dev
+  # This should be the full project id if it is an existing project.
+  project_name: ''
+  folder_id: ''
+  billing_account: ''
+  region: 'europe-west2'
+  machine_type: 'n1-standard-2'
+  # The label for this project in GCP
+  project_label: 'sandbox-eq'
+
 # Currently the docker registry can only be a GCR registry.
 # Ensure in the GCR settings, the visibility is set to Public.
-# The gcp_project_id should be the project id where the container registry is hosted.
+# The google.project_id should be the project id where the container registry is hosted.
 # This is the docker registry to pull the application images from.
-app_docker_registry: eu.gcr.io/<gcp_project_id}>
-
-# The docker registry to pull the build images from.
-build_image_docker_registry: eu.gcr.io/census-eq-ci
-
-import_existing_project: false
-# The environment you would like to provision e.g. dev
-# This should be the full project id if it is an existing project.
-project_name: ''
+docker:
+    app_registry: eu.gcr.io/<google.project_id>
+    # The docker registry to pull the build images from.
+    build_image_registry: eu.gcr.io/census-eq-ci
 
 # If a non development state bucket for the terraform backend is used, specify it here
-load_generator_tf_state_bucket: 'eq-terraform-load-generator-tfstate'
+terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
 
 # Override the default kubernetes version if necessary
 k8s_min_master_version: 1.13
-gcp_folder_id: ''
-gcp_billing_account: ''
-region: 'europe-west2'
-machine_type: 'n1-standard-2'
 
 slack_channel_name: ''
-
-# The label for this project in GCP
-gcp_project_label: 'sandbox-eq'
 
 # The full DNS name for runner
 # For example: myenv-runner.gcp.dev.eq.ons.digital
