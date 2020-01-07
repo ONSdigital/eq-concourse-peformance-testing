@@ -6,7 +6,6 @@ docker_registry: eu.gcr.io/census-eq-ci
 # The docker registry to pull the build images from.
 build_image_docker_registry: eu.gcr.io/census-eq-ci
 
-import_existing_project: true
 # The environment you would like to provision e.g. dev
 # This should be the full project id if it is an existing project.
 project_name: 'eq-daily-performance-test'
