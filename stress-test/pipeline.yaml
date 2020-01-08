@@ -63,11 +63,6 @@ resources:
       username: _json_key
       password: ((gcp.service_account_json))
 
-  - name: eq-infrastructure-build-image
-    type: docker-image
-    source:
-      repository: ((docker.build_image_registry))/eq-infrastructure-build-image
-
 ##############################################################################
 # Misc Resources
 ##############################################################################
@@ -110,14 +105,14 @@ jobs:
   - name: deploy-infrastructure
     serial_groups: [run-stress-test]
     plan:
-    - get: eq-terraform-load-generator
-    - get: eq-infrastructure-build-image
-    - get: eq-survey-runner-benchmark
-    - task: Build & Deploy Infrastructure
-      file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
-      image: eq-infrastructure-build-image
-      params:
-        <<: *infrastructure_vars
+      - get: eq-terraform-load-generator
+      - get: eq-survey-runner-benchmark
+      - task: Build & Deploy Infrastructure
+        file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
+        params:
+          <<: *infrastructure_vars
+        vars:
+          image_registry: ((docker.build_image_registry))
     on_failure:
       put: slack-alert
       params:
@@ -181,18 +176,16 @@ jobs:
     serial_groups: [run-stress-test]
     plan:
     - get: eq-terraform-load-generator
-    - get: eq-infrastructure-build-image
-      passed:
-        - deploy-infrastructure
     - get: eq-survey-runner-benchmark
       passed:
         - run-stress-test
       trigger: true
     - task: Destroy Infrastructure
       file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
-      image: eq-infrastructure-build-image
       params:
         <<: *infrastructure_vars
+      vars:
+        image_registry: ((docker.build_image_registry))
     on_failure:
       put: slack-alert
       params:
