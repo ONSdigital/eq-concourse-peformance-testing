@@ -31,7 +31,7 @@ resource_types:
   - name: slack-notification
     type: docker-image
     source:
-      repository: cfcommunity/slack-notification-resource
+      repository: arbourd/concourse-slack-alert-resource
       tag: latest
 
 resources:
@@ -71,6 +71,7 @@ resources:
     type: slack-notification
     source:
       url: ((slack.webhook))
+      channel: '#((slack_channel_name))'
 
 jobs:
 
@@ -91,12 +92,13 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        channel: '#((slack_channel_name))'
-        attachments:
-          - pretext: Benchmark Image Build Failed
-            color: danger
-            title: Concourse Build $BUILD_ID
-            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+        message: Benchmark Image Build Failed
+        alert_type: failed
+    on_success:
+      put: slack-alert
+      params:
+        message: Benchmark Image Build Passed
+        alert_type: success
 
 ##############################################################################
 # Deploy Infrastructure
@@ -116,21 +118,13 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        channel: '#((slack_channel_name))'
-        attachments:
-          - pretext: Load Generator Infrastructure Deploy Failed
-            color: danger
-            title: Concourse Build $BUILD_ID
-            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+        message: Load Generator Infrastructure Deploy Failed
+        alert_type: failed
     on_success:
       put: slack-alert
       params:
-        channel: '#((slack_channel_name))'
-        attachments:
-          - pretext: Load Generator Infrastructure Deploy Passed
-            color: good
-            title: Concourse Build $BUILD_ID
-            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+        message: Load Generator Infrastructure Deploy Passed
+        alert_type: success
 
 ##############################################################################
 # Run Stress Test
@@ -151,22 +145,13 @@ jobs:
       on_failure:
         put: slack-alert
         params:
-          channel: '#((slack_channel_name))'
-          attachments:
-            - pretext: Survey Runner Stress Test Failed
-              color: danger
-              title: Concourse Build $BUILD_ID
-              title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+          message: Survey Runner Stress Test Failed
+          alert_type: failed
       on_success:
         put: slack-alert
         params:
-          channel: '#((slack_channel_name))'
-          attachments:
-            - pretext: Survey Runner Stress Test Passed
-              color: good
-              title: Concourse Build $BUILD_ID
-              title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
-
+          message: Survey Runner Stress Test Passed
+          alert_type: success
 
 ##############################################################################
 # Destroy Infrastructure
@@ -189,19 +174,10 @@ jobs:
     on_failure:
       put: slack-alert
       params:
-        channel: '#((slack_channel_name))'
-        attachments:
-          - pretext: Load Generator Infrastructure Destroy Failed
-            color: danger
-            title: Concourse Build $BUILD_ID
-            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
+        message: Load Generator Infrastructure Destroy Failed
+        alert_type: failed
     on_success:
       put: slack-alert
       params:
-        channel: '#((slack_channel_name))'
-        attachments:
-          - pretext: Load Generator Infrastructure Destroy Passed
-            color: good
-            title: Concourse Build $BUILD_ID
-            title_link: $ATC_EXTERNAL_URL/builds/$BUILD_ID
-
+        message: Load Generator Infrastructure Destroy Passed
+        alert_type: success
