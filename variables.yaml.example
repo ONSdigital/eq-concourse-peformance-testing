@@ -5,9 +5,11 @@ google:
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'
-  machine_type: 'n1-standard-2'
   # The label for this project in GCP
   project_label: 'sandbox-eq'
+
+# What machine type to use for each node
+machine_type: 'n1-standard-2'
 
 # Currently the docker registry can only be a GCR registry.
 # Ensure in the GCR settings, the visibility is set to Public.
@@ -21,9 +23,6 @@ docker:
 # If a non development state bucket for the terraform backend is used, specify it here
 terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
 
-# Override the default kubernetes version if necessary
-k8s_min_master_version: 1.13
-
 slack_channel_name: ''
 
 # The full DNS name for runner
@@ -33,12 +32,11 @@ runner_fully_qualified_domain_name: ''
 requested_cpu_per_pod: '0.7'
 requested_memory_per_pod: '2048Mi'
 
-# How many instances of the test runner to use
-parallelism: 1
+number_of_load_injector_instances: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
-number_of_clients_per_pod: 10
-hatch_rate: 10
+number_of_clients_per_pod: '10'
+hatch_rate: '10'
 run_time: '30m'
 timeout: '60m'

@@ -3,16 +3,15 @@ google:
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'
-  machine_type: 'n1-standard-2'
   project_label: 'sandbox-eq'
 
 docker:
   app_registry: eu.gcr.io/census-eq-ci
   build_image_registry: eu.gcr.io/census-eq-ci
 
-terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
+machine_type: 'n1-standard-2'
 
-k8s_min_master_version: 1.13
+terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
 
 slack_channel_name: 'eq-stress-test'
 
@@ -21,7 +20,7 @@ runner_fully_qualified_domain_name: 'stress-test-runner.gcp.dev.eq.ons.digital'
 requested_cpu_per_pod: '0.5'
 requested_memory_per_pod: '2048Mi'
 
-parallelism: 1
+number_of_load_injector_instances: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'

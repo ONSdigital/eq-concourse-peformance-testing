@@ -1,6 +1,6 @@
 # eq-concourse-peformance-testing
 
-This repo holds the pipelines to performance and stress test EQ Survey Runner.
+This repo holds the pipelines to performance and stress test EQ Questionnaire Runner.
 
 ## Authenticate with Concourse
 
@@ -15,9 +15,10 @@ This will configure the target `census-eq` to point to the eq team on Concourse.
 ## Development Environments
 
 #### Prerequisites
-You must have a project with a *Google Container Registry (GCR)* already set up to be able to push built images.
-Set your registry in *variables.yaml* to `eu.gcr.io/<gcp_project_id>`. The `gcp_project_id` should be the ID of the GCP project under which the container registry is hosted.
-Ensure in the GCR settings, the visibility is set to Public. To do this, you must first initialize a registry manually via the UI or run the docker build step which would fail the first time since it would be private.
+- An existing GCP project.
+- *Google Container Registry (GCR)* enabled for the GCP project.
+- Set the registry in *variables.yaml* to `eu.gcr.io/<gcp_project_id>`. The `gcp_project_id` should be the ID of the GCP project under which the container registry is hosted.
+- Ensure the visibility of the GCR is set to Public. To do this, you must first initialize a registry manually via the UI or run the docker build step (which will fail on the first run due to not having initialized the registry).
 
 #### Scheduled pipeline triggers
 The first time you create a pipeline that depend on a time resource, you *will not* be able to trigger tasks that depend on these time resources because there will be no available versions of time resource. In our case, a version of this resource is only created at the time specified by the pipeline, for example, the benchmark-timed-schedule pipeline is initiated at 3 AM.
@@ -38,7 +39,7 @@ Therefore, for development purposes, you will need to set the source start time 
 Pipeline | Schedule | Notes |
 --- | --- | --- |
 daily-test | 3 AM every day | Deploys infrastructure required to carry out a performance test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket. Once complete the infrastructure is torn down ready for the next scheduled test.
-stress-test | Manually triggered | Deploys infrastructure required to carry out a stress test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket. Once complete the infrastructure is torn down.
+stress-test | Manually triggered | Deploys infrastructure required to carry out a stress test using eq-survey-runner-benchmark for which the outputs are stored in a GCS bucket.
 
 #### Deployment process
 

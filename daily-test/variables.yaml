@@ -3,16 +3,15 @@ google:
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'
-  machine_type: 'n1-standard-1'
   project_label: 'sandbox-eq'
 
 docker:
   app_registry: eu.gcr.io/census-eq-ci
-  build_image__registry: eu.gcr.io/census-eq-ci
+  build_image_registry: eu.gcr.io/census-eq-ci
+
+machine_type: 'n1-standard-1'
 
 terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
-
-k8s_min_master_version: 1.13
 
 slack_channel_name: 'eq-daily-performance-test'
 
@@ -21,11 +20,11 @@ runner_fully_qualified_domain_name: 'test-runner.gcp.dev.eq.ons.digital'
 requested_cpu_per_pod: '0.7'
 requested_memory_per_pod: '2048Mi'
 
-parallelism: 1
+number_of_load_injector_instances: 1
 user_wait_time_min_seconds: 0
 user_wait_time_max_seconds: 0
 requests_json: 'requests/census_individual_gb_eng.json'
-number_of_clients_per_pod: 10
-hatch_rate: 10
+number_of_clients_per_pod: '10'
+hatch_rate: '10'
 run_time: '30m'
 timeout: '60m'
