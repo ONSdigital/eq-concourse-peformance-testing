@@ -1,5 +1,5 @@
 google:
-  project_name: 'eq-daily-performance-test'
+  project_id: 'eq-daily-performance-test'
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'

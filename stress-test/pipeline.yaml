@@ -6,10 +6,10 @@ infrastructure_vars: &infrastructure_vars
   TF_VAR_gcp_billing_account: ((google.billing_account))
   TF_VAR_project_env: ((google.project_label))
   TF_VAR_machine_type: ((k8s.node_machine_type))
-  TF_VAR_project_name: ((google.project_name))
+  TF_VAR_project_id: ((google.project_id))
 
 stress_test_vars: &stress_test_vars
-  PROJECT_NAME: ((google.project_name))
+  PROJECT_ID: ((google.project_id))
   REGION: ((google.region))
   REQUESTS_JSON: ((benchmark.requests_json))
   LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_pod)) --hatch-rate ((benchmark.hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'

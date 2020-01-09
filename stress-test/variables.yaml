@@ -1,5 +1,5 @@
 google:
-  project_name: 'eq-load-injectors'
+  project_id: 'eq-load-injectors'
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'

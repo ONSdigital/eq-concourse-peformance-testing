@@ -1,6 +1,6 @@
 google:
   # Use the full project id of an existing project.
-  project_name: ''
+  project_id: ''
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'
