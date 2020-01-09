@@ -8,7 +8,7 @@ infrastructure_vars: &infrastructure_vars
   TF_VAR_machine_type: ((k8s.node_machine_type))
   TF_VAR_project_id: ((google.project_id))
 
-stress_test_vars: &stress_test_vars
+bencmark_vars: &benchmark_vars
   PROJECT_ID: ((google.project_id))
   REGION: ((google.region))
   REQUESTS_JSON: ((benchmark.requests_json))
@@ -140,7 +140,7 @@ jobs:
     - task: Run Survey Runner Stress Test
       file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
       params:
-        <<: *run_stress_test_vars
+        <<: *benchmark_vars
       on_failure:
         put: slack-alert
         params:
