@@ -5,22 +5,22 @@ infrastructure_vars: &infrastructure_vars
   TF_VAR_gcp_folder_id: ((google.folder_id))
   TF_VAR_gcp_billing_account: ((google.billing_account))
   TF_VAR_project_env: ((google.project_label))
-  TF_VAR_machine_type: ((machine_type))
+  TF_VAR_machine_type: ((k8s.node_machine_type))
   TF_VAR_project_name: ((google.project_name))
 
-run_stress_test_vars: &run_stress_test_vars
+stress_test_vars: &stress_test_vars
   PROJECT_NAME: ((google.project_name))
   REGION: ((google.region))
-  REQUESTS_JSON: ((requests_json))
-  LOCUST_OPTIONS: '--no-web --clients ((number_of_clients_per_pod)) --hatch-rate ((hatch_rate)) --run-time ((run_time)) --csv=output -L WARNING'
-  RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((runner_fully_qualified_domain_name))
+  REQUESTS_JSON: ((benchmark.requests_json))
+  LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_pod)) --hatch-rate ((benchmark.hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
+  RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((benchmark.target_fully_qualified_domain_name))
   DOCKER_REGISTRY: ((docker.app_registry))
-  USER_WAIT_TIME_MIN_SECONDS: ((user_wait_time_min_seconds))
-  USER_WAIT_TIME_MAX_SECONDS: ((user_wait_time_max_seconds))
-  REQUESTED_CPU_PER_POD: ((requested_cpu_per_pod))
-  REQUESTED_MEMORY_PER_POD: ((requested_memory_per_pod))
-  PARALLELISM: ((number_of_load_injector_instances))
-  TIMEOUT: ((timeout))
+  USER_WAIT_TIME_MIN_SECONDS: ((benchmark.user_wait_time_min_seconds))
+  USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
+  REQUESTED_CPU_PER_POD: ((benchmark.requested_cpu_per_pod))
+  REQUESTED_MEMORY_PER_POD: ((benchmark.requested_memory_per_pod))
+  PARALLELISM: ((benchmark.load_injector_instances))
+  TIMEOUT: ((benchmark.timeout))
 
 ##############################################################################
 # Resources
@@ -70,7 +70,7 @@ resources:
     type: slack-notification
     source:
       url: ((slack.webhook))
-      channel: '#((slack_channel_name))'
+      channel: '#((slack_channel.name))'
 
 jobs:
 

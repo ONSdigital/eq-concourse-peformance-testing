@@ -5,26 +5,28 @@ google:
   region: 'europe-west2'
   project_label: 'sandbox-eq'
 
+k8s:
+  node_machine_type: 'n1-standard-2'
+
 docker:
-  app_registry: eu.gcr.io/census-eq-ci
-  build_image_registry: eu.gcr.io/census-eq-ci
+  app_registry: 'eu.gcr.io/census-eq-ci'
+  build_image_registry: 'eu.gcr.io/census-eq-ci'
 
-machine_type: 'n1-standard-2'
+terraform:
+  state_bucket: 'eq-terraform-load-generator-tfstate'
 
-terraform_state_bucket: 'eq-terraform-load-generator-tfstate'
+slack_channel:
+  name: 'eq-stress-test'
 
-slack_channel_name: 'eq-stress-test'
-
-runner_fully_qualified_domain_name: 'stress-test-runner.gcp.dev.eq.ons.digital'
-
-requested_cpu_per_pod: '0.5'
-requested_memory_per_pod: '2048Mi'
-
-number_of_load_injector_instances: 1
-user_wait_time_min_seconds: 0
-user_wait_time_max_seconds: 0
-requests_json: 'requests/census_individual_gb_eng.json'
-number_of_clients_per_pod: '125'
-hatch_rate: '125'
-run_time: '2m'
-timeout: '60m'
+benchmark:
+  load_injector_instances: 6
+  user_wait_time_min_seconds: 0
+  user_wait_time_max_seconds: 0
+  requests_json: 'requests/census_individual_gb_eng.json'
+  clients_per_pod: '125'
+  hatch_rate: '125'
+  run_time: '30m'
+  timeout: '60m'
+  target_fully_qualified_domain_name: 'stress-test-runner.gcp.dev.eq.ons.digital'
+  requested_cpu_per_pod: '1.9'
+  requested_memory_per_pod: '4048Mi'
