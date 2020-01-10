@@ -11,7 +11,6 @@ k8s:
 docker:
   app_registry: 'eu.gcr.io/census-eq-ci'
   build_image_registry: 'eu.gcr.io/census-eq-ci'
-  tag: 'stress-test'
 
 terraform:
   state_bucket: 'eq-terraform-load-generator-tfstate'
@@ -21,6 +20,7 @@ slack_channel:
 
 benchmark:
   load_injector_instances: 6
+  tag: 'branch-stress-test'
   user_wait_time_min_seconds: 0
   user_wait_time_max_seconds: 0
   requests_json: 'requests/census_individual_gb_eng.json'

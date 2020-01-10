@@ -15,7 +15,7 @@ benchmark_vars: &benchmark_vars
   LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_pod)) --hatch-rate ((benchmark.hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((benchmark.target_fully_qualified_domain_name))
   DOCKER_REGISTRY: ((docker.app_registry))
-  IMAGE_TAG: ((docker.tag))
+  IMAGE_TAG: ((benchmark.tag))
   USER_WAIT_TIME_MIN_SECONDS: ((benchmark.user_wait_time_min_seconds))
   USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
   REQUESTED_CPU_PER_POD: ((benchmark.requested_cpu_per_pod))
