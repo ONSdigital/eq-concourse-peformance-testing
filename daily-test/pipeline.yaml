@@ -107,7 +107,8 @@ jobs:
     plan:
       - get: eq-survey-runner-benchmark
       - get: scheduled-benchmark-trigger
-        passed: deploy-infrastructure
+        passed:
+          - deploy-infrastructure
         trigger: true
       - task: Run Survey Runner Benchmark
         file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
@@ -133,9 +134,11 @@ jobs:
     plan:
       - get: eq-terraform-load-generator
       - get: eq-survey-runner-benchmark
-        passed: run-benchmark
+        passed:
+          - run-benchmark
       - get: scheduled-benchmark-trigger
-        passed: run-benchmark
+        passed:
+          - run-benchmark
         trigger: true
       - task: Destroy Infrastructure
         file: 'eq-terraform-load-generator/ci/destroy_infrastructure.yaml'

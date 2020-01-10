@@ -9,8 +9,8 @@ k8s:
   node_machine_type: 'n1-standard-1'
 
 docker:
-  app_registry: eu.gcr.io/census-eq-ci
-  build_image_registry: eu.gcr.io/census-eq-ci
+  app_registry: 'eu.gcr.io/census-eq-ci'
+  build_image_registry: 'eu.gcr.io/census-eq-ci'
 
 terraform:
   state_bucket: 'eq-terraform-load-generator-tfstate'
