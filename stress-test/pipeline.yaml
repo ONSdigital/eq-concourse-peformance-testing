@@ -8,7 +8,7 @@ infrastructure_vars: &infrastructure_vars
   TF_VAR_machine_type: ((k8s.node_machine_type))
   TF_VAR_project_id: ((google.project_id))
 
-bencmark_vars: &benchmark_vars
+benchmark_vars: &benchmark_vars
   PROJECT_ID: ((google.project_id))
   REGION: ((google.region))
   REQUESTS_JSON: ((benchmark.requests_json))
@@ -52,17 +52,6 @@ resources:
       branch: stress-test
 
 ##############################################################################
-# Docker Images
-##############################################################################
-
-  - name: eq-survey-runner-benchmark-image
-    type: docker-image
-    source:
-      repository: ((docker.app_registry))/eq-survey-runner-benchmark
-      username: _json_key
-      password: ((gcp.service_account_json))
-
-##############################################################################
 # Misc Resources
 ##############################################################################
 
@@ -75,31 +64,6 @@ resources:
 jobs:
 
 ##############################################################################
-# Build Survey Runner Benchmark
-##############################################################################
-
-  - name: build-survey-runner-benchmark
-    plan:
-    - get: eq-survey-runner-benchmark
-    - put: eq-survey-runner-benchmark-image
-      params:
-        build: eq-survey-runner-benchmark
-        tag_file: eq-survey-runner-benchmark/.git/HEAD
-        tag_as_latest: true
-      get_params:
-        skip_download: true
-    on_failure:
-      put: slack-alert
-      params:
-        message: Benchmark Image Build Failed
-        alert_type: failed
-    on_success:
-      put: slack-alert
-      params:
-        message: Benchmark Image Build Passed
-        alert_type: success
-
-##############################################################################
 # Deploy Infrastructure
 ##############################################################################
 
@@ -107,7 +71,6 @@ jobs:
     serial_groups: [run-stress-test]
     plan:
       - get: eq-terraform-load-generator
-      - get: eq-survey-runner-benchmark
       - task: Build & Deploy Infrastructure
         file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
         params:
@@ -133,9 +96,9 @@ jobs:
     serial_groups: [run-stress-test]
     plan:
     - get: eq-survey-runner-benchmark
+    - get: eq-terraform-load-generator
       passed:
         - deploy-infrastructure
-        -  build-survey-runner-benchmark
       trigger: true
     - task: Run Survey Runner Stress Test
       file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
@@ -163,7 +126,6 @@ jobs:
     - get: eq-survey-runner-benchmark
       passed:
         - run-stress-test
-      trigger: true
     - task: Destroy Infrastructure
       file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
       params:

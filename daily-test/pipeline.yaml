@@ -15,6 +15,7 @@ benchmark_vars: &benchmark_vars
   LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_pod)) --hatch-rate ((benchmark.hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((benchmark.target_fully_qualified_domain_name))
   DOCKER_REGISTRY: ((docker.app_registry))
+  IMAGE_TAG: ((docker.tag))
   USER_WAIT_TIME_MIN_SECONDS: ((benchmark.user_wait_time_min_seconds))
   USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
   REQUESTED_CPU_PER_POD: ((benchmark.requested_cpu_per_pod))
@@ -52,22 +53,6 @@ resources:
       branch: stress-test
 
 ##############################################################################
-# Docker Images
-##############################################################################
-
-  - name: eq-survey-runner-benchmark-image
-    type: docker-image
-    source:
-      repository: ((docker.app_registry))/eq-survey-runner-benchmark
-      username: _json_key
-      password: ((gcp.service_account_json))
-
-  - name: eq-infrastructure-build-image
-    type: docker-image
-    source:
-      repository: ((docker.build_image_registry))/eq-infrastructure-build-image
-
-##############################################################################
 # Misc Resources
 ##############################################################################
 
@@ -85,33 +70,6 @@ resources:
       location: Europe/London
 
 jobs:
-
-##############################################################################
-# Build Survey Runner Benchmark
-##############################################################################
-
-  - name: build-survey-runner-benchmark
-    plan:
-    - get: eq-survey-runner-benchmark
-    - get: scheduled-benchmark-trigger
-      trigger: true
-    - put: eq-survey-runner-benchmark-image
-      params:
-        build: eq-survey-runner-benchmark
-        tag_file: eq-survey-runner-benchmark/.git/HEAD
-        tag_as_latest: true
-      get_params:
-        skip_download: true
-    on_failure:
-      put: slack-alert
-      params:
-        message: Benchmark Image Build Failed
-        alert_type: failed
-    on_success:
-      put: slack-alert
-      params:
-        message: Benchmark Image Build Passed
-        alert_type: success
 
 ##############################################################################
 # Deploy Infrastructure
@@ -149,7 +107,7 @@ jobs:
     plan:
       - get: eq-survey-runner-benchmark
       - get: scheduled-benchmark-trigger
-        passed: [build-survey-runner-benchmark, deploy-infrastructure]
+        passed: deploy-infrastructure
         trigger: true
       - task: Run Survey Runner Benchmark
         file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
@@ -175,9 +133,9 @@ jobs:
     plan:
       - get: eq-terraform-load-generator
       - get: eq-survey-runner-benchmark
-        passed: [build-survey-runner-benchmark, run-benchmark]
+        passed: run-benchmark
       - get: scheduled-benchmark-trigger
-        passed: [build-survey-runner-benchmark, run-benchmark]
+        passed: run-benchmark
         trigger: true
       - task: Destroy Infrastructure
         file: 'eq-terraform-load-generator/ci/destroy_infrastructure.yaml'

@@ -11,6 +11,7 @@ k8s:
 docker:
   app_registry: 'eu.gcr.io/census-eq-ci'
   build_image_registry: 'eu.gcr.io/census-eq-ci'
+  tag: 'stress-test'
 
 terraform:
   state_bucket: 'eq-terraform-load-generator-tfstate'
