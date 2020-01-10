@@ -141,7 +141,7 @@ jobs:
           - run-benchmark
         trigger: true
       - task: Destroy Infrastructure
-        file: 'eq-terraform-load-generator/ci/destroy_infrastructure.yaml'
+        file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
         params:
           <<: *infrastructure_vars
     on_failure:
