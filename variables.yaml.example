@@ -8,6 +8,11 @@ google:
 
 k8s:
   node_machine_type: 'n1-standard-2'
+  target_fully_qualified_domain_name: 'staging-runner.gcp.dev.eq.ons.digital/questionnaire/'
+  # For limits see https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture
+  available_cpu_per_pod: '0.7'
+  available_memory_per_pod: '2048Mi'
+  run_time: '30m'
 
 # Currently the docker registry can only be a GCR registry.
 # Ensure in the GCR settings, the visibility is set to Public.
@@ -25,14 +30,10 @@ slack_channel:
   name: ''
 
 benchmark:
-    load_injector_instances: 1
-    user_wait_time_min_seconds: 0
-    user_wait_time_max_seconds: 0
-    requests_json: 'requests/census_individual_gb_eng.json'
-    clients_per_pod: '10'
-    hatch_rate: '10'
-    run_time: '30m'
-    timeout: '60m'
-    target_fully_qualified_domain_name: 'staging-runner.gcp.dev.eq.ons.digital/questionnaire/'
-    requested_cpu_per_pod: '0.7'
-    requested_memory_per_pod: '2048Mi'
+  image_tag: 'latest'
+  instances: '1'
+  clients_per_instance: '10'
+  user_wait_time_min_seconds: 0
+  user_wait_time_max_seconds: 0
+  requests_json: 'requests/census_individual_gb_eng.json'
+  hatch_rate: '10'
