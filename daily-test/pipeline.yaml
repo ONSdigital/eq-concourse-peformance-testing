@@ -144,6 +144,8 @@ jobs:
         file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
         params:
           <<: *infrastructure_vars
+        vars:
+          image_registry: ((docker.build_image_registry))
     on_failure:
       put: slack-alert
       params:
