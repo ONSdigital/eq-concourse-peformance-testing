@@ -1,3 +1,5 @@
+# vim: set filetype=yaml :
+
 project:
   # Use the full project id of an existing project.
   id: ''
