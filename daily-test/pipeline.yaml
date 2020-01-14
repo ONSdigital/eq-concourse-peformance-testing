@@ -20,7 +20,7 @@ benchmark_vars: &benchmark_vars
   USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
   REQUESTED_CPU_PER_POD: ((k8s.available_cpu_per_pod))
   REQUESTED_MEMORY_PER_POD: ((k8s.available_memory_per_pod))
-  PARALLELISM: ((benchmark.load_injector_instances))
+  PARALLELISM: ((benchmark.instances))
   TIMEOUT: ((k8s.timeout))
 
 ##############################################################################
