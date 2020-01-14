@@ -18,7 +18,7 @@ k8s:
 
 # Currently the docker registry can only be a GCR registry.
 # Ensure in the GCR settings, the visibility is set to Public.
-# The google.project_id should be the project id where the container registry is hosted.
+# The project.id should be the project id where the container registry is hosted.
 docker:
   app_registry: 'eu.gcr.io/<google.project_id>'
   build_image_registry: 'eu.gcr.io/census-eq-ci'
