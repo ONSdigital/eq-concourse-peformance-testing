@@ -10,11 +10,6 @@ project:
 
 k8s:
   node_machine_type: 'n1-standard-2'
-  target_fully_qualified_domain_name: 'staging-runner.gcp.dev.eq.ons.digital/questionnaire/'
-  # For limits see https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-architecture
-  available_cpu_per_pod: '0.7'
-  available_memory_per_pod: '2048Mi'
-  run_time: '30m'
 
 # Currently the docker registry can only be a GCR registry.
 # Ensure in the GCR settings, the visibility is set to Public.
@@ -39,3 +34,6 @@ benchmark:
   user_wait_time_min_seconds: 0
   user_wait_time_max_seconds: 0
   requests_json: 'requests/census_individual_gb_eng.json'
+  run_time: '30m'
+  timeout: '60m'
+  target_fully_qualified_domain_name: 'staging-runner.gcp.dev.eq.ons.digital'

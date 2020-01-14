@@ -7,8 +7,6 @@ project:
 
 k8s:
   node_machine_type: 'custom-1-2560'
-  available_cpu: '0.7'
-  available_memory: '2048Mi'
 
 docker:
   app_registry: 'eu.gcr.io/census-eq-ci'
