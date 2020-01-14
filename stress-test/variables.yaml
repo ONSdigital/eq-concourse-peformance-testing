@@ -7,8 +7,8 @@ project:
 
 k8s:
   node_machine_type: 'n1-standard-2'
-  available_cpu_per_pod: '0.7'
-  available_memory_per_pod: '2048Mi'
+  available_cpu_per_node: '0.7'
+  available_memory_per_node: '2048Mi'
   timeout: '60m'
 
 docker:
@@ -25,9 +25,9 @@ benchmark:
   image_tag: 'branch-stress-test'
   instances: '1'
   clients_per_instance: '125'
+  clients_hatch_rate: '125'
   user_wait_time_min_seconds: 0
   user_wait_time_max_seconds: 0
   requests_json: 'requests/census_individual_gb_eng.json'
-  hatch_rate: '125'
   run_time: '2m'
   target_fully_qualified_domain_name: 'stress-test-runner.gcp.dev.eq.ons.digital'

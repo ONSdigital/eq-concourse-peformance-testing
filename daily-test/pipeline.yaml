@@ -12,14 +12,14 @@ benchmark_vars: &benchmark_vars
   PROJECT_ID: ((project.id))
   REGION: ((project.region))
   REQUESTS_JSON: ((benchmark.requests_json))
-  LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_instance)) --hatch-rate ((benchmark.hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
+  LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_instance)) --hatch-rate ((benchmark.clients_hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((benchmark.target_fully_qualified_domain_name))
   DOCKER_REGISTRY: ((docker.app_registry))
   IMAGE_TAG: ((benchmark.image_tag))
   USER_WAIT_TIME_MIN_SECONDS: ((benchmark.user_wait_time_min_seconds))
   USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
-  REQUESTED_CPU_PER_POD: ((k8s.available_cpu_per_pod))
-  REQUESTED_MEMORY_PER_POD: ((k8s.available_memory_per_pod))
+  REQUESTED_CPU_PER_NODE: ((k8s.available_cpu_per_node))
+  REQUESTED_MEMORY_PER_NODE: ((k8s.available_memory_per_node))
   PARALLELISM: ((benchmark.instances))
   TIMEOUT: ((k8s.timeout))
 

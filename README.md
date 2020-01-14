@@ -15,13 +15,13 @@ This will configure the target `census-eq` to point to the eq team on Concourse.
 ## Development Environments
 
 #### Prerequisites
-- An existing GCP project.
-- *Google Container Registry (GCR)* enabled for the GCP project.
-- Set the registry in *variables.yaml* to `eu.gcr.io/<gcp_project_id>`. The `gcp_project_id` should be the ID of the GCP project under which the container registry is hosted.
-- Ensure the visibility of the GCR is set to Public. To do this, you must first initialize a registry manually via the UI or run the docker build step (which will fail on the first run due to not having initialized the registry).
+- An existing GCP project to provision the infrastructure in.
+- *Google Container Registry (GCR)* enabled for a GCP project.
+- Set the registry in *variables.yaml* to `eu.gcr.io/<gcp_project_id>` where `gcp_project_id` should be the ID of the GCP project under which the container registry is hosted.
+- Ensure the visibility of the GCR is set to Public.
 
 #### Scheduled pipeline triggers
-The first time you create a pipeline that depend on a time resource, you *will not* be able to trigger tasks that depend on these time resources because there will be no available versions of time resource. In our case, a version of this resource is only created at the time specified by the pipeline, for example, the benchmark-timed-schedule pipeline is initiated at 3 AM.
+The first time you create a pipeline that depend on a time resource, you *will not* be able to trigger tasks that depend on these time resources because there will be no available versions of time resource. In our case, a version of this resource is only created at the time specified by the pipeline, for example, the daily-test pipeline is initiated at 3 AM.
 Therefore, for development purposes, you will need to set the source start time to a short while in the future so that you have enough time to create and unpause the pipeline. This only needs to be done once to kick start the initial build, after which this can be reset to default.
 
 **Resource for benchmark-timed-schedule.yaml**
@@ -85,4 +85,4 @@ kubectl --namespace=concourse-main get secrets
 
 ## Slack
 
-Pipeline deployment notifications are alerted to the slack channel defined by `slack_channel_name` in *variables.yaml*. *(Do not include the `#`).*
+Pipeline deployment notifications are alerted to the slack channel defined by `slack_channel.name` in *variables.yaml*. *(Do not include the `#`).*

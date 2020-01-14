@@ -8,8 +8,8 @@ project:
 k8s:
   node_machine_type: 'n1-standard-1'
   timeout: '60m'
-  available_cpu_per_pod: '0.7'
-  available_memory_per_pod: '2048Mi'
+  available_cpu_per_node: '0.7'
+  available_memory_per_node: '2048Mi'
 
 docker:
   app_registry: 'eu.gcr.io/census-eq-ci'
@@ -24,10 +24,10 @@ slack_channel:
 benchmark:
   image_tag: 'latest'
   instances: 1
+  clients_per_instance: '10'
+  clients_hatch_rate: '10'
   user_wait_time_min_seconds: 0
   user_wait_time_max_seconds: 0
   requests_json: 'requests/census_individual_gb_eng.json'
-  clients_per_instance: '10'
-  hatch_rate: '10'
   run_time: '30m'
   target_fully_qualified_domain_name: 'test-runner.gcp.dev.eq.ons.digital'
