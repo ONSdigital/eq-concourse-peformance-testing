@@ -6,7 +6,7 @@ project:
   label: 'sandbox-eq'
 
 k8s:
-  node_machine_type: 'n1-standard-2'
+  node_machine_type: 'custom-1-2560'
   available_cpu_per_node: '0.7'
   available_memory_per_node: '2048Mi'
   timeout: '60m'
