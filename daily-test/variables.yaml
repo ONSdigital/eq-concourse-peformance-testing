@@ -7,9 +7,8 @@ project:
 
 k8s:
   node_machine_type: 'custom-1-2560'
-  timeout: '60m'
-  available_cpu_per_node: '0.7'
-  available_memory_per_node: '2048Mi'
+  available_cpu: '0.7'
+  available_memory: '2048Mi'
 
 docker:
   app_registry: 'eu.gcr.io/census-eq-ci'
@@ -30,4 +29,5 @@ benchmark:
   user_wait_time_max_seconds: 0
   requests_json: 'requests/census_individual_gb_eng.json'
   run_time: '30m'
+  timeout: '60m'
   target_fully_qualified_domain_name: 'test-runner.gcp.dev.eq.ons.digital'
