@@ -1,9 +1,9 @@
-google:
-  project_id: 'eq-load-injectors'
+project:
+  id: 'eq-load-injectors'
   folder_id: ''
   billing_account: ''
   region: 'europe-west2'
-  project_label: 'sandbox-eq'
+  label: 'sandbox-eq'
 
 k8s:
   node_machine_type: 'n1-standard-2'

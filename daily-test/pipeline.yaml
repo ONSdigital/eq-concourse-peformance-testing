@@ -2,15 +2,15 @@
 # YAML Anchors
 ##############################################################################
 infrastructure_vars: &infrastructure_vars
-  TF_VAR_gcp_folder_id: ((google.folder_id))
-  TF_VAR_gcp_billing_account: ((google.billing_account))
-  TF_VAR_project_env: ((google.project_label))
+  TF_VAR_gcp_folder_id: ((project.folder_id))
+  TF_VAR_gcp_billing_account: ((project.billing_account))
+  TF_VAR_project_env: ((project.label))
   TF_VAR_machine_type: ((k8s.node_machine_type))
-  TF_VAR_project_id: ((google.project_id))
+  TF_VAR_project_id: ((project.id))
 
 benchmark_vars: &benchmark_vars
-  PROJECT_ID: ((google.project_id))
-  REGION: ((google.region))
+  PROJECT_ID: ((project.id))
+  REGION: ((project.region))
   REQUESTS_JSON: ((benchmark.requests_json))
   LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_instance)) --hatch-rate ((benchmark.hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
   RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((benchmark.target_fully_qualified_domain_name))
