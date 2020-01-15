@@ -2,8 +2,6 @@
 # YAML Anchors
 ##############################################################################
 infrastructure_vars: &infrastructure_vars
-  TF_VAR_gcp_folder_id: ((project.folder_id))
-  TF_VAR_gcp_billing_account: ((project.billing_account))
   TF_VAR_project_env: ((project.label))
   TF_VAR_machine_type: ((k8s.node_machine_type))
   TF_VAR_project_id: ((project.id))

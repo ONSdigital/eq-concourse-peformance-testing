@@ -3,8 +3,6 @@
 project:
   # Use the full project id of an existing project.
   id: ''
-  folder_id: ''
-  billing_account: ''
   region: 'europe-west2'
   label: 'sandbox-eq'
 

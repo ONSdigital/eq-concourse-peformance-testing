@@ -1,7 +1,5 @@
 project:
   id: 'eq-daily-performance-test'
-  folder_id: ''
-  billing_account: ''
   region: 'europe-west2'
   label: 'sandbox-eq'
 

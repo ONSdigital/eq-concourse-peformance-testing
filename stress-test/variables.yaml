@@ -1,7 +1,5 @@
 project:
   id: 'eq-load-injectors'
-  folder_id: ''
-  billing_account: ''
   region: 'europe-west2'
   label: 'sandbox-eq'
 
