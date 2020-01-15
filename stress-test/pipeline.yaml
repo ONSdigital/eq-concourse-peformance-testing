@@ -18,8 +18,6 @@ benchmark_vars: &benchmark_vars
   IMAGE_TAG: ((benchmark.image_tag))
   USER_WAIT_TIME_MIN_SECONDS: ((benchmark.user_wait_time_min_seconds))
   USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
-  AVAILABLE_CPU: ((k8s.available_cpu))
-  AVAILABLE_MEMORY: ((k8s.available_memory))
   PARALLELISM: ((benchmark.instances))
   TIMEOUT: ((benchmark.timeout))
 
