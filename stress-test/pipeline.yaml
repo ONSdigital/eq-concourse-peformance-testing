@@ -121,7 +121,7 @@ jobs:
     plan:
     - get: eq-terraform-load-generator
       passed:
-        - run-stress-test
+        - deploy-infrastructure
     - task: Destroy Infrastructure
       file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
       params:
