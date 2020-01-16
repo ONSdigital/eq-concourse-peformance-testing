@@ -4,7 +4,7 @@
 infrastructure_vars: &infrastructure_vars
   TF_VAR_project_env: ((project.label))
   TF_VAR_machine_type: ((k8s.node_machine_type))
-  TF_VAR_project_id: ((project.id))
+  PROJECT_ID: ((project.id))
 
 benchmark_vars: &benchmark_vars
   PROJECT_ID: ((project.id))
