@@ -18,6 +18,7 @@ benchmark_vars: &benchmark_vars
   USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
   PARALLELISM: ((benchmark.instances))
   TIMEOUT: ((benchmark.timeout))
+  OUTPUT_DIR: ((benchmark.output_directory))
 
 ##############################################################################
 # Resources

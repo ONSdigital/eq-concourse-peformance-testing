@@ -35,3 +35,4 @@ benchmark:
   run_time: '30m'
   timeout: '60m'
   target_fully_qualified_domain_name: 'staging-runner.gcp.dev.eq.ons.digital'
+  output_directory: 'daily-test'
