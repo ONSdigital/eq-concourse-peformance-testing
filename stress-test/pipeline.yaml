@@ -21,7 +21,7 @@ benchmark_vars: &benchmark_vars
   OUTPUT_DIR: ((benchmark.output_directory))
 
 ##############################################################################
-# Resources
+# Resource Types
 ##############################################################################
 
 resource_types:
