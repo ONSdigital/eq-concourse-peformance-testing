@@ -4,7 +4,6 @@ project:
   # Use the full project id of an existing project.
   id: ''
   region: 'europe-west2'
-  label: 'sandbox-eq'
 
 k8s:
   node_machine_type: 'custom-1-2560'
