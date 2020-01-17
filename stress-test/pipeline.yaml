@@ -97,7 +97,6 @@ jobs:
     - get: eq-terraform-load-generator
       passed:
         - deploy-infrastructure
-      trigger: true
     - task: Run Survey Runner Stress Test
       file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
       params:
