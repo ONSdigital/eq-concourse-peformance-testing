@@ -1,7 +1,6 @@
 project:
   id: 'eq-load-injectors'
   region: 'europe-west2'
-  label: 'sandbox-eq'
 
 k8s:
   node_machine_type: 'custom-1-2560'

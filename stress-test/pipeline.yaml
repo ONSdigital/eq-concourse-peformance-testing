@@ -2,7 +2,6 @@
 # YAML Anchors
 ##############################################################################
 infrastructure_vars: &infrastructure_vars
-  TF_VAR_project_env: ((project.label))
   TF_VAR_machine_type: ((k8s.node_machine_type))
   PROJECT_ID: ((project.id))
 
