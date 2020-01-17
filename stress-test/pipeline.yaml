@@ -41,13 +41,11 @@ resources:
     type: git
     source:
       uri: https://github.com/ONSdigital/eq-survey-runner-benchmark.git
-      branch: stress-test
 
   - name: eq-terraform-load-generator
     type: git
     source:
       uri: https://github.com/ONSdigital/eq-terraform-load-generator.git
-      branch: stress-test
 
 ##############################################################################
 # Misc Resources
