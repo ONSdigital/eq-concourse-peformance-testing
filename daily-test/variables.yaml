@@ -1,0 +1,29 @@
+project:
+  id: 'eq-daily-performance-test'
+  region: 'europe-west2'
+
+k8s:
+  node_machine_type: 'custom-1-2560'
+
+docker:
+  app_registry: 'eu.gcr.io/census-eq-ci'
+  build_image_registry: 'eu.gcr.io/census-eq-ci'
+
+terraform:
+  state_bucket: 'eq-terraform-load-generator-tfstate'
+
+slack_channel:
+  name: 'eq-daily-performance-test'
+
+benchmark:
+  image_tag: 'latest'
+  instances: 1
+  clients_per_instance: '10'
+  clients_hatch_rate: '10'
+  user_wait_time_min_seconds: 0
+  user_wait_time_max_seconds: 0
+  requests_json: 'requests/census_individual_gb_eng.json'
+  run_time: '30m'
+  timeout: '60m'
+  target_fully_qualified_domain_name: 'test-runner.gcp.dev.eq.ons.digital'
+  output_directory: 'daily-test'

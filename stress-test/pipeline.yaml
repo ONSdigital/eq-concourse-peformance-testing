@@ -1,0 +1,137 @@
+##############################################################################
+# YAML Anchors
+##############################################################################
+infrastructure_vars: &infrastructure_vars
+  TF_VAR_machine_type: ((k8s.node_machine_type))
+  PROJECT_ID: ((project.id))
+
+benchmark_vars: &benchmark_vars
+  PROJECT_ID: ((project.id))
+  REGION: ((project.region))
+  REQUESTS_JSON: ((benchmark.requests_json))
+  LOCUST_OPTIONS: '--no-web --clients ((benchmark.clients_per_instance)) --hatch-rate ((benchmark.clients_hatch_rate)) --run-time ((benchmark.run_time)) --csv=output -L WARNING'
+  RUNNER_FULLY_QUALIFIED_DOMAIN_NAME: ((benchmark.target_fully_qualified_domain_name))
+  DOCKER_REGISTRY: ((docker.app_registry))
+  IMAGE_TAG: ((benchmark.image_tag))
+  USER_WAIT_TIME_MIN_SECONDS: ((benchmark.user_wait_time_min_seconds))
+  USER_WAIT_TIME_MAX_SECONDS: ((benchmark.user_wait_time_max_seconds))
+  PARALLELISM: ((benchmark.instances))
+  TIMEOUT: ((benchmark.timeout))
+  OUTPUT_DIR: ((benchmark.output_directory))
+
+##############################################################################
+# Resource Types
+##############################################################################
+
+resource_types:
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: arbourd/concourse-slack-alert-resource
+      tag: latest
+
+resources:
+
+##############################################################################
+# Git Repositories
+##############################################################################
+
+  - name: eq-survey-runner-benchmark
+    type: git
+    source:
+      uri: https://github.com/ONSdigital/eq-survey-runner-benchmark.git
+
+  - name: eq-terraform-load-generator
+    type: git
+    source:
+      uri: https://github.com/ONSdigital/eq-terraform-load-generator.git
+
+##############################################################################
+# Misc Resources
+##############################################################################
+
+  - name: slack-alert
+    type: slack-notification
+    source:
+      url: ((slack.webhook))
+      channel: '#((slack_channel.name))'
+
+jobs:
+
+##############################################################################
+# Deploy Infrastructure
+##############################################################################
+
+  - name: deploy-infrastructure
+    serial_groups: [run-stress-test]
+    plan:
+      - get: eq-terraform-load-generator
+      - task: Build & Deploy Infrastructure
+        file: 'eq-terraform-load-generator/ci/deploy-infrastructure.yaml'
+        params:
+          <<: *infrastructure_vars
+        vars:
+          image_registry: ((docker.build_image_registry))
+    on_failure:
+      put: slack-alert
+      params:
+        message: Load Generator Infrastructure Deploy Failed
+        alert_type: failed
+    on_success:
+      put: slack-alert
+      params:
+        message: Load Generator Infrastructure Deploy Passed
+        alert_type: success
+
+##############################################################################
+# Run Stress Test
+##############################################################################
+
+  - name: run-stress-test
+    serial_groups: [run-stress-test]
+    plan:
+    - get: eq-survey-runner-benchmark
+    - get: eq-terraform-load-generator
+      passed:
+        - deploy-infrastructure
+    - task: Run Survey Runner Stress Test
+      file: 'eq-survey-runner-benchmark/ci/run-benchmark.yaml'
+      params:
+        <<: *benchmark_vars
+      on_failure:
+        put: slack-alert
+        params:
+          message: Survey Runner Stress Test Failed
+          alert_type: failed
+      on_success:
+        put: slack-alert
+        params:
+          message: Survey Runner Stress Test Passed
+          alert_type: success
+
+##############################################################################
+# Destroy Infrastructure
+##############################################################################
+
+  - name: destroy-infrastructure
+    serial_groups: [run-stress-test]
+    plan:
+    - get: eq-terraform-load-generator
+      passed:
+        - deploy-infrastructure
+    - task: Destroy Infrastructure
+      file: 'eq-terraform-load-generator/ci/destroy-infrastructure.yaml'
+      params:
+        <<: *infrastructure_vars
+      vars:
+        image_registry: ((docker.build_image_registry))
+    on_failure:
+      put: slack-alert
+      params:
+        message: Load Generator Infrastructure Destroy Failed
+        alert_type: failed
+    on_success:
+      put: slack-alert
+      params:
+        message: Load Generator Infrastructure Destroy Passed
+        alert_type: success
