@@ -18,11 +18,11 @@ slack_channel:
 benchmark:
   image_tag: 'latest'
   instances: 1
-  clients_per_instance: '10'
-  clients_hatch_rate: '10'
+  clients_per_instance: '20'
+  clients_hatch_rate: '20'
   user_wait_time_min_seconds: 0
   user_wait_time_max_seconds: 0
-  requests_json: 'requests/census_individual_gb_eng.json'
+  requests_json: 'requests/census_household_gb_eng.json'
   run_time: '30m'
   timeout: '60m'
   target_fully_qualified_domain_name: 'test-runner.gcp.dev.eq.ons.digital'
