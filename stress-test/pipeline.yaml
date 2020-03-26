@@ -77,6 +77,11 @@ jobs:
       params:
         message: Load Generator Infrastructure Deploy Failed
         alert_type: failed
+    on_error:
+      put: slack-alert
+      params:
+        message: Load Generator Infrastructure Deploy Errored
+        alert_type: failed
     on_success:
       put: slack-alert
       params:
@@ -102,6 +107,11 @@ jobs:
         put: slack-alert
         params:
           message: Survey Runner Stress Test Failed
+          alert_type: failed
+      on_error:
+        put: slack-alert
+        params:
+          message: Survey Runner Stress Test Errored
           alert_type: failed
       on_success:
         put: slack-alert
@@ -129,6 +139,11 @@ jobs:
       put: slack-alert
       params:
         message: Load Generator Infrastructure Destroy Failed
+        alert_type: failed
+    on_error:
+      put: slack-alert
+      params:
+        message: Load Generator Infrastructure Destroy Errored
         alert_type: failed
     on_success:
       put: slack-alert
