@@ -82,6 +82,7 @@ jobs:
       params:
         message: Load Generator Infrastructure Deploy Errored
         alert_type: failed
+        color: '#F4A624'
     on_success:
       put: slack-alert
       params:
@@ -113,6 +114,7 @@ jobs:
         params:
           message: Survey Runner Stress Test Errored
           alert_type: failed
+          color: '#F4A624'
       on_success:
         put: slack-alert
         params:
@@ -145,6 +147,7 @@ jobs:
       params:
         message: Load Generator Infrastructure Destroy Errored
         alert_type: failed
+        color: '#F4A624'
     on_success:
       put: slack-alert
       params:
