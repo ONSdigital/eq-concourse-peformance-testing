@@ -8,11 +8,9 @@ project:
 k8s:
   node_machine_type: 'custom-1-2560'
 
-# Currently the docker registry can only be a GCR registry.
-# Ensure in the GCR settings, the visibility is set to Public.
 # The project.id should be the project id where the container registry is hosted.
 docker:
-  app_registry: 'eu.gcr.io/<google.project_id>'
+  app_registry: 'docker.io/onsdigital'
   build_image_registry: 'eu.gcr.io/census-eq-ci'
 
 # If a non development state bucket for the terraform backend is used, specify it here

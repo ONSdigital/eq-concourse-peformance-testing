@@ -6,7 +6,7 @@ k8s:
   node_machine_type: 'custom-1-2560'
 
 docker:
-  app_registry: 'eu.gcr.io/census-eq-ci'
+  app_registry: 'docker.io/onsdigital'
   build_image_registry: 'eu.gcr.io/census-eq-ci'
 
 slack_channel:
